@@ -24,7 +24,7 @@ config :esioci, EsioCi.Repo,
   adapter: Ecto.Adapters.Postgres,
   database: "esioci",
   username: "postgres",
-  password: "postgres",
+  password: "",
   hostname: "localhost"
 
 config :esioci, ecto_repos: [EsioCi.Repo]
