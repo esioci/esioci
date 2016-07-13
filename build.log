@@ -1,0 +1,6 @@
+build startedBuild cmd ls -lahrt exited succesfullyrazem 20K
+drwxrwxr-x 15 esio esio 4,0K lip 12 19:04 ..
+drwxrwxr-x  8 esio esio 4,0K lip 12 19:04 .git
+-rw-rw-r--  1 esio esio   33 lip 12 19:04 esioci.yaml
+-rw-rw-r--  1 esio esio    8 lip 12 19:04 e
+drwxrwxr-x  3 esio esio 4,0K lip 12 19:04 .
