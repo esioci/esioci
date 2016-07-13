@@ -3,6 +3,8 @@ esioci
 
 An OpenSource Continuous Integration software
 
+[![Build Status](https://travis-ci.org/esioci/esioci.svg?branch=master)](https://travis-ci.org/esioci/esioci)
+
 Requirements
 -----
 * Elixir 1.2.6
