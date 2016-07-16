@@ -47,21 +47,13 @@ defmodule EsioCi.Router do
     end
   end
 
-  get "/test" do
-    build = from b in "builds",
-      where: b.id == 2,
-      select: b
-    x = EsioCi.Repo.all(build)
-    Logger.info inspect x
-    send_resp(conn, 200, "EsioCi app alpha")
-  end
   # 404
   match _ do
     conn
     |> send_resp(404, "404 Nothing here")
   end
 
-  defp add_build_to_db(project_id) do
+  def add_build_to_db(project_id) do
     build = %EsioCi.Build{state: "CREATED", project_id: project_id}
     created_build = EsioCi.Repo.insert!(build)
     created_build.id
