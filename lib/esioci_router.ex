@@ -23,6 +23,7 @@ defmodule EsioCi.Router do
     send_resp(conn, 200, "EsioCi app alpha")
   end
 
+  # Run build for project
   get "/api/v1/:project/bld" do
     # Insert build to database
     Logger.info project
