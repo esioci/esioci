@@ -32,6 +32,7 @@ defmodule EsioCi.Router do
       select: p.id
 
     p_id = EsioCi.Repo.all(q)
+    Logger.debug p_id
     case Enum.count(p_id) do
        0 -> conn
             |> send_resp(404, "404: Project #{project} not found.")
