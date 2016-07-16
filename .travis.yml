@@ -8,4 +8,4 @@ services:
 before_script:
   - psql -c 'create database esioci;' -U postgres
 script:
-  - "MIX_ENV=test mix do deps.get, test && mix compile && mix coveralls"
+  - "MIX_ENV=test mix do deps.get && mix compile && mix ecto.migrate && mix coveralls"
