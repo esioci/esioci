@@ -47,6 +47,14 @@ defmodule EsioCi.Router do
     end
   end
 
+  get "/test" do
+    build = from b in "builds",
+      where: b.id == 2,
+      select: b
+    x = EsioCi.Repo.all(build)
+    Logger.info inspect x
+    send_resp(conn, 200, "EsioCi app alpha")
+  end
   # 404
   match _ do
     conn
