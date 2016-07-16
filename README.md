@@ -28,6 +28,12 @@ Migrate
 ----
     mix ecto.migrate
 
+How to use esioci:
+----
+Create initial db data (project default)
+
+    mix run priv/repo/seeds.exs
+
 ROADMAP
 -----
 - Version 0.1
