@@ -27,7 +27,7 @@ defmodule EsioCi.Common do
       IO.binwrite file, stdout
       File.close file
       raise "Command #{cmd} exit code: #{exit_code}"
-      :nil
+      :error
     else
       Logger.info "Command #{cmd} exited successfully"
       Logger.info stdout
@@ -37,5 +37,12 @@ defmodule EsioCi.Common do
       File.close file
       :ok
     end
+  end
+  def change_bld_status(b_id, status) do
+    build = EsioCi.Repo.get(EsioCi.Build, b_id)
+    build = Ecto.Changeset.change build, state: status
+    Logger.info "update"
+    EsioCi.Repo.update! build
+    
   end
 end

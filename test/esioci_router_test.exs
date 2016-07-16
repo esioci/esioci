@@ -1,4 +1,5 @@
 defmodule Esioci.Router.Test do
+  import Ecto.Query, only: [from: 2]
   use ExUnit.Case, async: true
   use Plug.Test
 
@@ -31,5 +32,15 @@ defmodule Esioci.Router.Test do
 
     assert conn.state == :sent
     assert conn.status == 404
+  end
+
+  test "add build to db and change status" do
+    b_id = EsioCi.Router.add_build_to_db(1)
+    build = EsioCi.Repo.get(EsioCi.Build, b_id)
+    assert build != nil
+
+    EsioCi.Common.change_bld_status(b_id, "esioesioesio")
+    build = EsioCi.Repo.get(EsioCi.Build, b_id)
+    assert build.state == "esioesioesio"
   end
 end

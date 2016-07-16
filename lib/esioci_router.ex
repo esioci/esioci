@@ -53,7 +53,7 @@ defmodule EsioCi.Router do
     |> send_resp(404, "404 Nothing here")
   end
 
-  defp add_build_to_db(project_id) do
+  def add_build_to_db(project_id) do
     build = %EsioCi.Build{state: "CREATED", project_id: project_id}
     created_build = EsioCi.Repo.insert!(build)
     created_build.id

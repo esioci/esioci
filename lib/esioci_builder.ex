@@ -15,8 +15,13 @@ defmodule EsioCi.Builder do
           {scm, repo_address} = parse_bitbucket(msg)
 
           download_sources(scm, repo_address, dst)
+          EsioCi.Common.change_bld_status(build_id, "RUNNING")
+          case run_build(dst) do
+            :ok -> EsioCi.Common.change_bld_status(build_id, "COMPLETED")
+            _   -> EsioCi.Common.change_bld_status(build_id, "FAILED")
+              
+          end
 
-          run_build(dst)
         rescue
           e in RuntimeError -> e
           #Logger.error "Exception!"
