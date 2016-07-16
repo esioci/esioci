@@ -2,6 +2,7 @@ defmodule EsioCi.Router do
   use Plug.Router
   use Plug.ErrorHandler
   import Plug.Conn
+  import Plug.Conn.Utils
   require Logger
 
   plug Plug.Logger
@@ -22,7 +23,21 @@ defmodule EsioCi.Router do
     send_resp(conn, 200, "EsioCi app alpha")
   end
 
-  # API
+  get "/api/v1/:project/bld" do
+    # Insert build to database
+    Logger.info project
+    #build = %EsioCi.Build{state: "CREATED"}
+    #created_build = EsioCi.Repo.insert!(build)
+    #build_id = created_build.id
+
+    #pid = spawn(EsioCi.Builder, :build, [])
+    #send pid, {self, conn, build_id}
+
+    conn
+    |> send_resp(200, "Build created")
+  end
+
+  # deprecated
   post "/api/v1/bld" do
     # Insert build to database
     build = %EsioCi.Build{state: "CREATED"}
