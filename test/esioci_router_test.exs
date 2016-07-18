@@ -87,5 +87,4 @@ defmodule Esioci.Router.Test do
     build = EsioCi.Repo.get(EsioCi.Build, b_id)
     assert build.state == "esioesioesio"
   end
-
 end
