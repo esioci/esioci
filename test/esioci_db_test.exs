@@ -1,5 +1,4 @@
 defmodule Esioci.Db.Test do
-  import Ecto.Query, only: [from: 2]
   import Logger
   use ExUnit.Case, async: true
 
@@ -12,5 +11,9 @@ defmodule Esioci.Db.Test do
             "CREATED-esio-last-build-status", "",
             inserted_at,
             updated_at]]
+  end
+
+  test "return last build status with id" do
+    assert Esioci.Db.get_build_with_id(1, 5) == nil
   end
 end

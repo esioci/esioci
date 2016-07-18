@@ -1,0 +1,6 @@
+{
+  "skip_files": [
+    "lib/esioci_repo.ex",
+    "lib/esioci_db_schema.ex"
+  ],
+}
