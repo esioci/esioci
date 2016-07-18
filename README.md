@@ -4,6 +4,7 @@ esioci
 An OpenSource Continuous Integration software
 
 [![Build Status](https://travis-ci.org/esioci/esioci.svg?branch=master)](https://travis-ci.org/esioci/esioci)
+[![Coverage Status](https://coveralls.io/repos/github/esioci/esioci/badge.svg)](https://coveralls.io/github/esioci/esioci)
 
 Requirements
 -----
