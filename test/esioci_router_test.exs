@@ -25,6 +25,21 @@ defmodule Esioci.Router.Test do
     assert conn.resp_body == "404: Project esiononexistingproject not found."
   end
 
+  test "get last build status" do
+    build = %EsioCi.Build{state: "CREATED-esio-last-build-status", project_id: 1}
+    created_build = EsioCi.Repo.insert!(build)
+    {_, inserted_at} = Ecto.DateTime.dump(created_build.inserted_at)
+    {_, updated_at} = Ecto.DateTime.dump(created_build.updated_at)
+
+    conn = conn(:get, "/api/v1/default/bld/last")
+
+    conn = EsioCi.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 200
+    assert conn.resp_body == "[[#{created_build.id}, \"CREATED-esio-last-build-status\", \"\", #{inspect inserted_at}, #{inspect updated_at}]]"
+  end
+
   test "returns 404" do
     conn = conn(:get, "/esioesioesio")
 
