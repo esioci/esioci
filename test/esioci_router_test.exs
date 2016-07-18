@@ -26,12 +26,26 @@ defmodule Esioci.Router.Test do
   end
 
   test "get last build status" do
-    build = %EsioCi.Build{state: "CREATED-esio-last-build-status", project_id: 1}
+    q = from p in "projects",
+      where: p.name == "test02",
+      select: p.id
+
+    p_id = EsioCi.Repo.all(q)
+
+    if Enum.count(p_id) == 0 do
+      project = %EsioCi.Project{name: "test02"}
+      created_project = EsioCi.Repo.insert!(project)
+      project_id = created_project.id
+    else
+      project_id = List.first(p_id)
+    end
+
+    build = %EsioCi.Build{state: "CREATED-esio-last-build-status", project_id: project_id}
     created_build = EsioCi.Repo.insert!(build)
     {_, inserted_at} = Ecto.DateTime.dump(created_build.inserted_at)
     {_, updated_at} = Ecto.DateTime.dump(created_build.updated_at)
 
-    conn = conn(:get, "/api/v1/default/bld/last")
+    conn = conn(:get, "/api/v1/test02/bld/last")
 
     conn = EsioCi.Router.call(conn, @opts)
 
