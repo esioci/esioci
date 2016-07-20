@@ -42,8 +42,6 @@ defmodule Esioci.Router.Test do
 
     build = %EsioCi.Build{state: "CREATED-esio-last-build-status", project_id: project_id}
     created_build = EsioCi.Repo.insert!(build)
-    {_, inserted_at} = Ecto.DateTime.dump(created_build.inserted_at)
-    {_, updated_at} = Ecto.DateTime.dump(created_build.updated_at)
 
     conn = conn(:get, "/api/v1/test02/bld/last")
 
@@ -51,7 +49,7 @@ defmodule Esioci.Router.Test do
 
     assert conn.state == :sent
     assert conn.status == 200
-    assert conn.resp_body == "[[#{created_build.id}, \"CREATED-esio-last-build-status\", \"\", #{inspect inserted_at}, #{inspect updated_at}]]"
+    assert conn.resp_body == "[{\"updated_at\":\"#{Ecto.DateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"CREATED-esio-last-build-status\",\"project\":{\"name\":\"test02\",\"id\":2},\"inserted_at\":\"#{Ecto.DateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
   end
 
   test "get last build status from nonexisting project" do

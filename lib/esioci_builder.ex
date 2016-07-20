@@ -1,5 +1,6 @@
 defmodule EsioCi.Builder do
   require Logger
+  require Poison
 
   def build do
     receive do
