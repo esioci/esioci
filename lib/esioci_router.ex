@@ -48,11 +48,8 @@ defmodule EsioCi.Router do
     end
   end
 
-  # Run build for project
+  # Get build with id or last build
   get "/api/v1/:project/bld/:b_id" do
-    # Insert build to database
-    Logger.info project
-    Logger.info b_id
     q = from p in "projects",
       where: p.name == ^project,
       select: p.id
@@ -63,30 +60,13 @@ defmodule EsioCi.Router do
            |> send_resp(404, "404: Project #{project} not found.")
 
       1 -> conn
-           |> send_resp(200, "#{inspect Esioci.Db.get_build_with_id(List.first(p_id), b_id)}")
-           # pid = spawn(EsioCi.Builder, :build, [])
-           # send pid, {self, conn, build_id}
-           # conn
-           # |> send_resp(200, "Build created with id #{build_id}")
+            |> put_resp_content_type("application/json")
+            |> send_resp(200, Poison.encode!(Esioci.Db.get_build_with_id(List.first(p_id), b_id)))
 
       _ -> conn
            |> send_resp(503, "Something get wrong...")
         
     end
-   # Logger.debug p_id
-   # case Enum.count(p_id) do
-   #    0 -> conn
-   #         |> send_resp(404, "404: Project #{project} not found.")
-
-   #    1 -> build_id = add_build_to_db(List.first(p_id))
-   #         pid = spawn(EsioCi.Builder, :build, [])
-   #         send pid, {self, conn, build_id}
-   #         conn
-   #         |> send_resp(200, "Build created with id #{build_id}")
-
-   #    _ -> conn
-   #         |> send_resp(503, "Something get wrong...")
-   # end
   end
 
   # 404

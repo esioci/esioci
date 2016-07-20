@@ -4,21 +4,13 @@ defmodule Esioci.Db do
 
   def get_build_with_id(p_id, b_id) do
     case b_id do
-      "last" -> get_last_build_from_project(p_id)
+      "last" -> build = get_last_build_from_project(p_id) |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
        _ -> Logger.error "Not implemented yet"
             :nil
     end
   end 
   
   defp get_last_build_from_project(p_id) do
-    Logger.info p_id
-    q = from b in "builds",
-      where: b.project_id == ^p_id,
-      order_by: [desc: :id],
-      limit: 1,
-      select: [b.id, b.state, b.artifacts_dir, b.inserted_at, b.updated_at]
-
-    EsioCi.Repo.all(q)
-    
+    from builds in EsioCi.Build, where: builds.project_id == ^p_id, order_by: [desc: :id], limit: 1
   end
 end
