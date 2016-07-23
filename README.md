@@ -42,14 +42,12 @@ ROADMAP
         * ~~[DONE] support for GIT~~
     + Build:
         * ~~[DONE] Run build only on server~~
-        * ~~[DONE] Save only log for all steps~~
     + Build configuration file:
         * ~~[DONE] All build configuration in esioci.yaml~~
         * ~~[DONE] exec() - run basic shell commands~~
     + REST:
         * run build using webhook
-            - github
-            - ~~[DONE] bitbucket~~
+            - ~~[DONE] github~~
         * ~~[DONE] check last build status~~
     + CI in esioci
 - Version 0.2
