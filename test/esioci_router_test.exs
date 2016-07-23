@@ -25,6 +25,16 @@ defmodule Esioci.Router.Test do
     assert conn.resp_body == "404: Project esiononexistingproject not found."
   end
 
+  test "can't create github build for nonexisting project" do
+    conn = conn(:post, "/api/v1/esiononexistingproject/bld/gh")
+
+    conn = EsioCi.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 404
+    assert conn.resp_body == "404: Project esiononexistingproject not found."
+  end
+
   test "get last build status" do
     q = from p in "projects",
       where: p.name == "test02",
