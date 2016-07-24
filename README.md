@@ -35,6 +35,19 @@ Create initial db data (project default)
 
     mix run priv/repo/seeds.exs
 
+CONFIGURATION
+Set env variable API_PORT to configure port.
+
+## How To Use
+### Installation
+1. Download source code
+2. Edit config/config.exs
+3. Create database
+4. Run migration `mix ecto.migrate`
+5. Seed database `mix run priv/repo/seeds.exs`
+6. Run application `screen iex -S mix run`
+7. Configure github webhook and point it to `address:port/api/v1/default/bld/gh`
+
 ROADMAP
 -----
 - Version 0.1
@@ -49,7 +62,7 @@ ROADMAP
         * run build using webhook
             - ~~[DONE] github~~
         * ~~[DONE] check last build status~~
-    + CI in esioci
+    + ~~[DONE] CI in esioci~~
 - Version 0.2
     + Build configuration file:
         * artifacts() - store artifacts specified directory
