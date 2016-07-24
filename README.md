@@ -1,54 +1,49 @@
-esioci
-=====
+#esioci
 
-An OpenSource Continuous Integration software
+EsioCi is an OpenSource Continuous Integration software
 
 [![Build Status](https://travis-ci.org/esioci/esioci.svg?branch=master)](https://travis-ci.org/esioci/esioci)
 [![Coverage Status](https://coveralls.io/repos/github/esioci/esioci/badge.svg)](https://coveralls.io/github/esioci/esioci)
 
-Requirements
------
-* Elixir 1.2.6
-
-Build
------
-    $ mix compile
-
-Run UnitTests
------
-    $ mix coveralls
-Run
------
-    $ iex -S mix run
-
-Create database schema
------
-    mix ecto.create
-
-Migrate
-----
-    mix ecto.migrate
-
-How to use esioci:
-----
-Create initial db data (project default)
-
-    mix run priv/repo/seeds.exs
-
-CONFIGURATION
-Set env variable API_PORT to configure port.
+## Requirements
+* Elixir >= 1.2
+* OTP 19
+* PostgreSQL database
 
 ## How To Use
-### Installation
+### Installation and Configuration
 1. Download source code
 2. Edit config/config.exs
+  1. Set api port
+  2. Configure database
 3. Create database
 4. Run migration `mix ecto.migrate`
 5. Seed database `mix run priv/repo/seeds.exs`
 6. Run application `screen iex -S mix run`
-7. Configure github webhook and point it to `address:port/api/v1/default/bld/gh`
+7. Configure github push webhook and point it to `address:port/api/v1/default/bld/gh`
 
-ROADMAP
+### API endpoints
+
+#### GET api/v1/project_name/bld/last
+Returns json with last build status for project: project_name
+
+#### POST api/v1/project_name/bld/gh
+Run github project
+
+## How To Develop
+### Run app first time
+1. get dependencies `mix deps.get`
+2. compile `mix compile`
+3. Create database `mix ecto.create`
+4. Migrate database `mix ecto.migrate`
+5. Seed database `mix run priv/repo/seeds.exs`
+6. run `iex -S mix run`
+
+### Unit tests
+1. Run unit tests and generate html coverage report `mix coveralls.html`
+2. Coverage html report in cover directory
+
+## ROADMAP
 -----
 - Version 0.1
     + SCM systems:
