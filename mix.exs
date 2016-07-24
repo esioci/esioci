@@ -42,6 +42,7 @@ defmodule EsioCi.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:yamerl, github: "yakaz/yamerl"},
       {:ex_doc, "~> 0.12", only: :dev},
+      {:credo, "~> 0.4", only: [:dev, :test]},
       {:excoveralls, "~> 0.5", only: :test}
     ]
   end
