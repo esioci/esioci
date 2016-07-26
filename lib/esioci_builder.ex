@@ -12,6 +12,7 @@ defmodule EsioCi.Builder do
                     status = parse_github(msg)
                               |> clone
                               |> parse_yaml
+                    Logger.debug status
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
             _ ->
@@ -47,11 +48,21 @@ defmodule EsioCi.Builder do
 
   def parse_yaml({ok, dst}) do
     Logger.debug "Parse yaml file"
-    Logger.info dst
-    [yaml | _] = :yamerl_constr.file("#{dst}/esioci.yaml")
-    [build | _] = :proplists.get_value('build', yaml)
-    build_cmd = :proplists.get_value('exec', build) |> List.to_string
-    EsioCi.Common.run(build_cmd, dst)
+    yaml_file = "#{dst}/esioci.yaml"
+    if File.exist?(yaml_file) do
+      try do
+        [yaml | _] = :yamerl_constr.file(yaml_file)
+        [build | _] = :proplists.get_value('build', yaml)
+        build_cmd = :proplists.get_value('exec', build) |> List.to_string
+        EsioCi.Common.run(build_cmd, dst)
+      rescue
+        e in MatchError -> Logger.error "dupa!"
+                           :error
+      end
+    else
+      Logger.error "yaml file: #{yaml_file} doesn't exist"
+      :error
+    end
   end
 
 end
