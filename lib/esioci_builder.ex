@@ -49,11 +49,11 @@ defmodule EsioCi.Builder do
   def parse_yaml({ok, dst}) do
     Logger.debug "Parse yaml file"
     yaml_file = "#{dst}/esioci.yaml"
-    if File.exist?(yaml_file) do
+    if File.exists?(yaml_file) do
       try do
         [yaml | _] = :yamerl_constr.file(yaml_file)
-        [build | _] = :proplists.get_value('build', yaml)
-        build_cmd = :proplists.get_value('exec', build) |> List.to_string
+        Logger.error inspect yaml
+        {:ok, build_cmd} = get_bld_cmd_from_yaml(yaml)
         EsioCi.Common.run(build_cmd, dst)
       rescue
         e in MatchError -> Logger.error "dupa!"
@@ -63,6 +63,11 @@ defmodule EsioCi.Builder do
       Logger.error "yaml file: #{yaml_file} doesn't exist"
       :error
     end
+  end
+
+  def get_bld_cmd_from_yaml(yaml) do
+    [build | _] = :proplists.get_value('build', yaml)
+    build_cmd = :proplists.get_value('exec', build) |> List.to_string
   end
 
 end
