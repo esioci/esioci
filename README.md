@@ -27,6 +27,9 @@ EsioCi is an OpenSource Continuous Integration software
 #### GET api/v1/project_name/bld/last
 Returns json with last build status for project: project_name
 
+#### GET api/v1/project_name/bld/build_id
+Returns json with specific build
+
 #### POST api/v1/project_name/bld/gh
 Run github project
 
@@ -45,7 +48,7 @@ Run github project
 
 ## ROADMAP
 -----
-- Version 0.1
+- Version 0.1 [DONE]
     + SCM systems:
         * ~~[DONE] support for GIT~~
     + Build:
