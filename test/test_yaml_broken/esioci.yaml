@@ -1,0 +1,3 @@
+---
+build:
+  - execdsada: "mix deps.get && mix.compile"

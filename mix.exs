@@ -43,7 +43,8 @@ defmodule EsioCi.Mixfile do
       {:yamerl, github: "yakaz/yamerl"},
       {:ex_doc, "~> 0.12", only: :dev},
       {:credo, "~> 0.4", only: [:dev, :test]},
-      {:excoveralls, "~> 0.5", only: :test}
+      {:excoveralls, "~> 0.5", only: :test},
+      {:meck, "~> 0.8.2", only: :test}
     ]
   end
 end

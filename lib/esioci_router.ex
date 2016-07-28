@@ -24,30 +24,6 @@ defmodule EsioCi.Router do
     send_resp(conn, 200, "EsioCi app alpha")
   end
 
-  # Run build for project
-  post "/api/v1/:project/bld" do
-    # Insert build to database
-    q = from p in "projects",
-      where: p.name == ^project,
-      select: p.id
-
-    p_id = EsioCi.Repo.all(q)
-    Logger.debug p_id
-    case Enum.count(p_id) do
-       0 -> conn
-            |> send_resp(404, "404: Project #{project} not found.")
-
-       1 -> build_id = add_build_to_db(List.first(p_id))
-            pid = spawn(EsioCi.Builder, :build, [])
-            send pid, {self, conn, build_id, "bb"}
-            conn
-            |> send_resp(200, "Build created with id #{build_id}")
-
-       _ -> conn
-            |> send_resp(503, "Something get wrong...")
-    end
-  end
-
   # Run build for project using github webhook
   post "/api/v1/:project/bld/gh" do
     # Insert build to database
