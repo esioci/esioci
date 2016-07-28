@@ -49,14 +49,20 @@ defmodule EsioCi.Builder do
   def parse_yaml({ok, dst}) do
     Logger.debug "Parse yaml file"
     yaml_file = "#{dst}/esioci.yaml"
+    Logger.debug yaml_file
     if File.exists?(yaml_file) do
       try do
         [yaml | _] = :yamerl_constr.file(yaml_file)
-        Logger.error inspect yaml
-        {:ok, build_cmd} = get_bld_cmd_from_yaml(yaml)
-        EsioCi.Common.run(build_cmd, dst)
+        Logger.debug inspect yaml
+        build_cmd = get_bld_cmd_from_yaml(yaml)
+        if build_cmd != :error do
+          EsioCi.Common.run(build_cmd, dst)
+        else
+          Logger.error "Error get build_cmd from yaml"
+          :error
+        end
       rescue
-        e in MatchError -> Logger.error "dupa!"
+        e in MatchError -> Logger.error "Error parsing yaml"
                            :error
       end
     else
@@ -67,7 +73,11 @@ defmodule EsioCi.Builder do
 
   def get_bld_cmd_from_yaml(yaml) do
     [build | _] = :proplists.get_value('build', yaml)
-    build_cmd = :proplists.get_value('exec', build) |> List.to_string
+    try do
+      build_cmd = :proplists.get_value('exec', build) |> List.to_string
+    rescue
+      e -> :error
+    end
   end
 
 end
