@@ -1,4 +1,4 @@
-defmodule Esioci.Db do
+defmodule EsioCi.Db do
   import Logger
   import Ecto.Query, only: [from: 2]
 
@@ -29,6 +29,5 @@ defmodule Esioci.Db do
 
   defp get_project(p_id) do
     from projects in EsioCi.Project, where: projects.id == ^p_id, order_by: [desc: :id]
-    
   end
 end

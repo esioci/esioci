@@ -7,7 +7,7 @@ defmodule Esioci.Db.Test do
     created_build = EsioCi.Repo.insert!(build)
     {_, inserted_at} = Ecto.DateTime.dump(created_build.inserted_at)
     {_, updated_at} = Ecto.DateTime.dump(created_build.updated_at)
-    assert inspect Esioci.Db.get_build_with_id(1, "last") == [[created_build.id,
+    assert inspect EsioCi.Db.get_build_with_id(1, "last") == [[created_build.id,
             "CREATED-esio-last-build-status", "",
             inserted_at,
             updated_at]]
@@ -19,13 +19,15 @@ defmodule Esioci.Db.Test do
     {_, inserted_at} = Ecto.DateTime.dump(created_build.inserted_at)
     {_, updated_at} = Ecto.DateTime.dump(created_build.updated_at)
     Logger.error created_build.id
-    assert inspect Esioci.Db.get_build_with_id(1, "#{created_build.id}") == [[created_build.id,
+    assert inspect EsioCi.Db.get_build_with_id(1, "#{created_build.id}") == [[created_build.id,
             "esioci_return_build_with_id", "",
             inserted_at,
-            updated_at]]
+            updated_at
+          ]]
   end
 
   test "return last build status with id" do
-    assert Esioci.Db.get_build_with_id(1, "esio") == :error
+    assert EsioCi.Db.get_build_with_id(1, "esio") == :error
   end
+
 end

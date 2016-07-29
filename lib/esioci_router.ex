@@ -61,7 +61,7 @@ defmodule EsioCi.Router do
 
       1 -> conn
             |> put_resp_content_type("application/json")
-            |> send_resp(200, Poison.encode!(Esioci.Db.get_build_with_id(List.first(p_id), b_id)))
+            |> send_resp(200, Poison.encode!(EsioCi.Db.get_build_with_id(List.first(p_id), b_id)))
 
       _ -> conn
            |> send_resp(503, "Something get wrong...")
@@ -83,7 +83,7 @@ defmodule EsioCi.Router do
 
       1 -> conn
             |> put_resp_content_type("application/json")
-            |> send_resp(200, Poison.encode!(Esioci.Db.get_project_by_id(List.first(p_id))))
+            |> send_resp(200, Poison.encode!(EsioCi.Db.get_project_by_id(List.first(p_id))))
 
       _ -> conn
            |> send_resp(503, "Something get wrong...")
