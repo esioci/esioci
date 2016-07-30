@@ -49,44 +49,41 @@ Run github project
 1. Run unit tests and generate html coverage report `mix coveralls.html`
 2. Coverage html report in cover directory
 
-## ROADMAP
------
-- Version 0.1 [DONE]
-    + SCM systems:
-        * ~~[DONE] support for GIT~~
-    + Build:
-        * ~~[DONE] Run build only on server~~
-    + Build configuration file:
-        * ~~[DONE] All build configuration in esioci.yaml~~
-        * ~~[DONE] exec() - run basic shell commands~~
-    + REST:
-        * run build using webhook
-            - ~~[DONE] github~~
-        * ~~[DONE] check last build status~~
-    + ~~[DONE] CI in esioci~~
-- Version 0.2
-    + Build configuration file:
-        * artifacts() - store artifacts specified directory
-    + REST:
-        * get_artifacts
-        * CRUD for projects, add support for multiple projects in one instance
-- Version 0.3
-    + Build:
-        * Run on distributed nodes
-    + Build configuration file:
-        * Run on specified node
-- Version 0.4
-    + Build:
-        * Distributed nodes have properties
-    + Build configuration file:
-        * Node properties support, e.g. run on node with attribute, OS, etc.
-- Version 0.5
-    + Build:
-        * parallel builds
-    + Build configuration file:
-        * add supports for multiple steps, parallel, sequential, etc.
-    + REST:
-        * get build steps map
+## Changelog:
+
+### v0.1 - 24.07.2016
+* Support for github requests
+* exec() command in esioci.yaml
+* API
+    - check last build status via api
+
+### v0.2 - 30.07.2016
+* API
+    - get build by id
+    - get project by name
+* Improvement code quality and code coverage
+
+### To Do:
+* Build configuration file:
+    - ~~[DONE] exec()~~
+    - artifacts() - save build artifacts
+    - pre_build() - run script before build
+    - run multiple exec()
+    - parallel and sequential strps
+    - container support
+* API
+    - ~~run build from guthub~~
+    - ~~get build~~
+    - ~~get project~~
+    - create project
+    - get build steps map
+    - download artifacts zip
+* Support for multiple nodes
+    - initial support
+    - check node facts
+* Misc:
+    - remove old, stuck build
+    - run build in containers
 
 Authors
 -----
