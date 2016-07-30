@@ -14,8 +14,9 @@ EsioCi is an OpenSource Continuous Integration software
 ### Installation and Configuration
 1. Download source code
 2. Edit config/config.exs
-  1. Set api port
+  1. Set api port, default is 4000
   2. Configure database
+  3. Set artifacts directory, default is /tmp/artifacts
 3. Create database
 4. Run migration `mix ecto.migrate`
 5. Seed database `mix run priv/repo/seeds.exs`
