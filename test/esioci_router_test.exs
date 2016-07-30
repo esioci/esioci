@@ -52,8 +52,55 @@ defmodule Esioci.Router.Test do
     assert conn.resp_body == "[{\"updated_at\":\"#{Ecto.DateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"CREATED-esio-last-build-status\",\"project\":{\"name\":\"test02\",\"id\":#{project_id}},\"inserted_at\":\"#{Ecto.DateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
   end
 
+  test "get build by id" do
+    q = from p in "projects",
+      where: p.name == "test02",
+      select: p.id
+
+    p_id = EsioCi.Repo.all(q)
+
+    if Enum.count(p_id) == 0 do
+      project = %EsioCi.Project{name: "test02"}
+      created_project = EsioCi.Repo.insert!(project)
+      project_id = created_project.id
+    else
+      project_id = List.first(p_id)
+    end
+
+    build = %EsioCi.Build{state: "CREATED-esio-build-by-id", project_id: project_id}
+    created_build = EsioCi.Repo.insert!(build)
+
+    conn = conn(:get, "/api/v1/test02/bld/#{created_build.id}")
+
+    conn = EsioCi.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 200
+    assert conn.resp_body == "[{\"updated_at\":\"#{Ecto.DateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"CREATED-esio-build-by-id\",\"project\":{\"name\":\"test02\",\"id\":#{project_id}},\"inserted_at\":\"#{Ecto.DateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
+  end
+
   test "get last build status from nonexisting project" do
     conn = conn(:get, "/api/v1/nonexisting-project/bld/last")
+
+    conn = EsioCi.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 404
+    assert conn.resp_body == "404: Project nonexisting-project not found."
+  end
+
+  test "get project" do
+    conn = conn(:get, "/api/v1/default")
+
+    conn = EsioCi.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 200
+    assert conn.resp_body == "[{\"name\":\"default\",\"id\":1}]"
+  end
+
+  test "get nonexisting project" do
+    conn = conn(:get, "/api/v1/nonexisting-project")
 
     conn = EsioCi.Router.call(conn, @opts)
 

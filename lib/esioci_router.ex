@@ -61,7 +61,7 @@ defmodule EsioCi.Router do
 
       1 -> conn
             |> put_resp_content_type("application/json")
-            |> send_resp(200, Poison.encode!(Esioci.Db.get_build_with_id(List.first(p_id), b_id)))
+            |> send_resp(200, Poison.encode!(EsioCi.Db.get_build_with_id(List.first(p_id), b_id)))
 
       _ -> conn
            |> send_resp(503, "Something get wrong...")
@@ -69,6 +69,27 @@ defmodule EsioCi.Router do
     end
   end
 
+
+  # Get project by project name
+  get "/api/v1/:project" do
+    q = from p in "projects",
+      where: p.name == ^project,
+      select: p.id
+
+    p_id = EsioCi.Repo.all(q)
+    case Enum.count(p_id) do
+      0 -> conn
+           |> send_resp(404, "404: Project #{project} not found.")
+
+      1 -> conn
+            |> put_resp_content_type("application/json")
+            |> send_resp(200, Poison.encode!(EsioCi.Db.get_project_by_id(List.first(p_id))))
+
+      _ -> conn
+           |> send_resp(503, "Something get wrong...")
+        
+    end
+  end
   # 404
   match _ do
     conn
