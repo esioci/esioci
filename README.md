@@ -69,13 +69,13 @@ Run github project
     - ~~[DONE] exec()~~
     - artifacts() - save build artifacts
     - pre_build() - run script before build
-    - run multiple exec()
+    - ~~[DONE] run multiple exec()~~
     - parallel and sequential strps
     - container support
 * API
-    - ~~run build from guthub~~
-    - ~~get build~~
-    - ~~get project~~
+    - ~~[DONE] run build from guthub~~
+    - ~~[DONE] get build~~
+    - ~~[DONE] get project~~
     - create project
     - get build steps map
     - download artifacts zip
