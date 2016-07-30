@@ -53,10 +53,16 @@ defmodule EsioCi.Builder do
     if File.exists?(yaml_file) do
       try do
         [yaml | _] = :yamerl_constr.file(yaml_file)
-        Logger.debug inspect yaml
         build_cmd = get_bld_cmd_from_yaml(yaml)
-        if build_cmd != :error do
-          EsioCi.Common.run(build_cmd, dst)
+        Logger.debug build_cmd
+        if build_cmd != :error and is_list(build_cmd) do
+          if is_integer(List.first(build_cmd)) do
+            EsioCi.Common.run(build_cmd, dst)
+          else
+            for cmd <- build_cmd do
+              EsioCi.Common.run(cmd, dst)
+            end
+          end
         else
           Logger.error "Error get build_cmd from yaml"
           :error
@@ -64,6 +70,8 @@ defmodule EsioCi.Builder do
       rescue
         e in MatchError -> Logger.error "Error parsing yaml"
                            :error
+        e in Protocol.UndefinedError -> Logger.error "Error parsing yaml"
+                            :error
       end
     else
       Logger.error "yaml file: #{yaml_file} doesn't exist"
@@ -72,9 +80,9 @@ defmodule EsioCi.Builder do
   end
 
   def get_bld_cmd_from_yaml(yaml) do
-    [build | _] = :proplists.get_value('build', yaml)
+    build = :proplists.get_value('build', yaml) |> List.first
     try do
-      build_cmd = :proplists.get_value('exec', build) |> List.to_string
+      :proplists.get_all_values('exec', build) |> List.first
     rescue
       e -> :error
     end

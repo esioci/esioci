@@ -9,7 +9,7 @@ defmodule EsioCi.Router do
   plug Plug.Logger
   plug :match
 
-
+  plug Plug.Static, at: "/artifacts", from: Application.get_env(:esioci, :artifacts_dir)
   plug Plug.Parsers, parsers: [:json],pass:  ["application/json"], json_decoder: Poison
   
   if Mix.env == :dev do
