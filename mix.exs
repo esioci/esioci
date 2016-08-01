@@ -37,6 +37,7 @@ defmodule EsioCi.Mixfile do
     [
       {:cowboy, "~> 1.0.0"},
       {:plug, "~> 1.1.6"},
+      {:cors_plug, "~> 1.1"},
       {:poison, "~> 2.2"},
       {:ecto, "~> 2.0.1"},
       {:postgrex, ">= 0.0.0"},

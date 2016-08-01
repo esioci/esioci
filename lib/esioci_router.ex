@@ -6,6 +6,7 @@ defmodule EsioCi.Router do
   import Ecto.Query, only: [from: 2]
   require Logger
 
+  plug CORSPlug
   plug Plug.Logger
   plug :match
 
