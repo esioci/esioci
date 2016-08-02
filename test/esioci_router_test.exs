@@ -25,6 +25,34 @@ defmodule Esioci.Router.Test do
     assert conn.resp_body == "404: Project esiononexistingproject not found."
   end
 
+  test "get all builds" do
+    q = from p in "projects",
+      where: p.name == "test03-get-all-builds",
+      select: p.id
+
+    p_id = EsioCi.Repo.all(q)
+
+    if Enum.count(p_id) != 0 do
+      project_id = List.first(p_id)
+      project = EsioCi.Repo.get(EsioCi.Project, project_id)
+      EsioCi.Repo.delete!(project)
+    end
+
+    project = %EsioCi.Project{name: "test03-get-all-builds"}
+    created_project = EsioCi.Repo.insert!(project)
+
+    build = %EsioCi.Build{state: "COMPLETED", project_id: created_project.id}
+    created_build = EsioCi.Repo.insert!(build)
+
+    conn = conn(:get, "/api/v1/test03-get-all-builds/bld/all")
+
+    conn = EsioCi.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 200
+    assert conn.resp_body == "[{\"updated_at\":\"#{Ecto.DateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"COMPLETED\",\"project\":{\"name\":\"test03-get-all-builds\",\"id\":#{created_project.id}},\"inserted_at\":\"#{Ecto.DateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
+  end
+
   test "get last build status" do
     q = from p in "projects",
       where: p.name == "test02",

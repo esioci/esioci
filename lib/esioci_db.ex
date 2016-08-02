@@ -10,6 +10,7 @@ defmodule EsioCi.Db do
     # end
     cond do
       b_id == "last"                -> build = get_last_build_from_project(p_id) |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
+      b_id == "all"                 -> build = get_builds(p_id) |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
       Integer.parse(b_id) != :error -> build = get_build(p_id, b_id) |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
       true                          -> :error
     end
@@ -25,6 +26,10 @@ defmodule EsioCi.Db do
 
   defp get_build(p_id, b_id) do
     from builds in EsioCi.Build, where: builds.project_id == ^p_id and builds.id == ^b_id, order_by: [desc: :id]
+  end
+
+  defp get_builds(p_id) do
+    from builds in EsioCi.Build, where: builds.project_id == ^p_id, order_by: [desc: :id]
   end
 
   defp get_project(p_id) do
