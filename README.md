@@ -31,6 +31,9 @@ Returns json with last build status for project: project_name
 #### GET api/v1/project_name/bld/build_id
 Returns json with specific build
 
+#### GET api/v1/project_name/bld/all
+Returns json with all builds for specific project
+
 #### GET api/v1/project_name
 Returns json with information about specific project
 
