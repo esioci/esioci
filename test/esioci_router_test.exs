@@ -1,4 +1,5 @@
 defmodule Esioci.Router.Test do
+  require Poison
   import Ecto.Query, only: [from: 2]
   use ExUnit.Case, async: true
   use Plug.Test
@@ -125,6 +126,28 @@ defmodule Esioci.Router.Test do
     assert conn.state == :sent
     assert conn.status == 200
     assert conn.resp_body == "[{\"name\":\"default\",\"id\":1}]"
+  end
+
+  test "get project by id" do
+    conn = conn(:get, "/api/v1/projects/1")
+
+    conn = EsioCi.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 200
+    assert conn.resp_body == "[{\"name\":\"default\",\"id\":1}]"
+  end
+
+  test "get all projects" do
+    conn = conn(:get, "/api/v1/projects/all")
+
+    conn = EsioCi.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 200
+    {:ok, json} = Poison.decode(conn.resp_body)
+    assert Enum.count(json) > 1
+    assert List.last(json) == %{"id" => 1, "name" => "default"}
   end
 
   test "get nonexisting project" do
