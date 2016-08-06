@@ -84,13 +84,21 @@ defmodule EsioCi.Router do
 
       1 -> conn
             |> put_resp_content_type("application/json")
-            |> send_resp(200, Poison.encode!(EsioCi.Db.get_project_by_id(List.first(p_id))))
+            |> send_resp(200, Poison.encode!(EsioCi.Db.get_project_by_id(Integer.to_string(List.first(p_id)))))
 
       _ -> conn
            |> send_resp(503, "Something get wrong...")
         
     end
   end
+
+  # get project by ID
+  get "/api/v1/projects/:p_id" do
+    conn
+     |> put_resp_content_type("application/json")
+     |> send_resp(200, Poison.encode!(EsioCi.Db.get_project_by_id(p_id)))
+  end
+
   # 404
   match _ do
     conn

@@ -37,6 +37,12 @@ Returns json with all builds for specific project
 #### GET api/v1/project_name
 Returns json with information about specific project
 
+#### GET api/v1/projects/project_id
+Returns json with information about project with id
+
+#### GET api/v1/projects/all
+Returns json with information about all project
+
 #### POST api/v1/project_name/bld/gh
 Run github project
 
