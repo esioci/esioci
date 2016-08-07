@@ -9,9 +9,9 @@ defmodule EsioCi.Db do
     #    _ -> Logger.error "DUPA"
     # end
     cond do
-      b_id == "last"                -> build = get_last_build_from_project(p_id) |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
-      b_id == "all"                 -> build = get_builds(p_id) |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
-      Integer.parse(b_id) != :error -> build = get_build(p_id, b_id) |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
+      b_id == "last"                -> p_id |> get_last_build_from_project |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
+      b_id == "all"                 -> p_id |> get_builds |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
+      Integer.parse(b_id) != :error -> get_build(p_id, b_id) |> EsioCi.Repo.all |> EsioCi.Repo.preload(:project)
       true                          -> :error
     end
   end
@@ -20,7 +20,7 @@ defmodule EsioCi.Db do
     Logger.info p_id
     cond do
       p_id == "all"                 -> get_projects |> EsioCi.Repo.all |> EsioCi.Repo.preload(:builds)
-      Integer.parse(p_id) != :error -> get_project(p_id) |> EsioCi.Repo.all |> EsioCi.Repo.preload(:builds)
+      Integer.parse(p_id) != :error -> p_id |> get_project |> EsioCi.Repo.all |> EsioCi.Repo.preload(:builds)
       true                          -> :error
     end
   end
