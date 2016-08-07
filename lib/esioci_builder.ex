@@ -9,7 +9,8 @@ defmodule EsioCi.Builder do
           case type do
             "gh" -> Logger.debug "Run build from github"
                     EsioCi.Common.change_bld_status(build_id, "RUNNING")
-                    status = parse_github(msg)
+                    status = msg
+                              |> parse_github
                               |> clone
                               |> parse_yaml
                     Logger.debug status
@@ -80,9 +81,9 @@ defmodule EsioCi.Builder do
   end
 
   def get_bld_cmd_from_yaml(yaml) do
-    build = :proplists.get_value('build', yaml) |> List.first
+    build_cmds = :proplists.get_value('build', yaml) |> List.first
     try do
-      :proplists.get_all_values('exec', build) |> List.first
+      :proplists.get_all_values('exec', build_cmds) |> List.first
     rescue
       e -> :error
     end
