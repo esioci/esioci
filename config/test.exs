@@ -18,7 +18,13 @@ end
 
 config :esioci, EsioCi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  database: db,
-  username: db_user,
-  password: db_passwd,
-  hostname: db_host
+  database: "#{db}",
+  username: "#{db_user}",
+  password: "#{db_passwd}",
+  hostname: "#{db_host}"
+
+config :esioci, ecto_repos: [EsioCi.Repo]
+
+config :esioci,
+  artifacts_dir: "/tmp/artifacts",
+  api_port: 12314
