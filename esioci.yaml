@@ -1,7 +1,3 @@
 ---
 build:
-  - exec: "MIX_ENV=test mix deps.get"
-  - exec: "MIX_ENV=test mix compile"
-  - exec: "MIX_ENV=test mix ecto.migrate"
-  - exec: "MIX_ENV=test mix run priv/repo/seeds.exs"
-  - exec: "MIX_ENV=test mix coveralls.html"
+  - exec: "MIX_ENV=test mix deps.get && MIX_ENV=test mix compile && MIX_ENV=test mix ecto.migrate && MIX_ENV=test mix run priv/repo/seeds.exs && MIX_ENV=test mix coveralls.html"
