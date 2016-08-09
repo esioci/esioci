@@ -54,8 +54,9 @@ defmodule EsioCi.Builder do
     if File.exists?(yaml_file) do
       try do
         [yaml | _] = :yamerl_constr.file(yaml_file)
+        Logger.debug "YAML from file: #{inspect yaml}"
         build_cmd = get_bld_cmd_from_yaml(yaml)
-        Logger.debug build_cmd
+        Logger.debug "Build cmd: #{build_cmd}"
         if build_cmd != :error and is_list(build_cmd) do
           # check if build_cmd is a string
           if is_integer(List.first(build_cmd)) do
@@ -84,12 +85,18 @@ defmodule EsioCi.Builder do
   end
 
   def get_bld_cmd_from_yaml(yaml) do
-    build_cmds = :proplists.get_value('build', yaml) |> List.first
-    try do
-      :proplists.get_all_values('exec', build_cmds) |> List.first
-    rescue
-      e -> :error
-    end
+    build_cmds = :proplists.get_value('build', yaml)
+    extract_cmd(build_cmds)
+  end
+
+  defp extract_cmd([]) do
+    []
+  end
+
+  defp extract_cmd([head|tail]) do
+    [{'exec', cmd }] = head
+    cmd_str = cmd |> List.to_string
+    [cmd] ++ extract_cmd(tail)
   end
 
 end
