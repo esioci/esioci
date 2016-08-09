@@ -57,10 +57,13 @@ defmodule EsioCi.Builder do
         build_cmd = get_bld_cmd_from_yaml(yaml)
         Logger.debug build_cmd
         if build_cmd != :error and is_list(build_cmd) do
+          # check if build_cmd is a string
           if is_integer(List.first(build_cmd)) do
-            EsioCi.Common.run(build_cmd, dst)
+            cmd = build_cmd |> to_string
+            EsioCi.Common.run(cmd, dst)
           else
-            for cmd <- build_cmd do
+            for one_cmd <- build_cmd do
+              cmd = one_cmd |> to_string
               EsioCi.Common.run(cmd, dst)
             end
           end
