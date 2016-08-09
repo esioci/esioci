@@ -22,7 +22,7 @@ defmodule EsioCi.Common do
   def change_bld_status(b_id, status) do
     build = EsioCi.Repo.get(EsioCi.Build, b_id)
     build = Ecto.Changeset.change build, state: status
-    Logger.info "update"
+    Logger.info "Build status update to #{status}"
     EsioCi.Repo.update! build
     
   end
