@@ -7,7 +7,9 @@ defmodule EsioCi.Common do
 
   def run(cmd, dir \\ "/tmp") do
     cmd_list = String.split(cmd)
-    {stdout, exit_code} = System.cmd(hd(cmd_list), tl(cmd_list), stderr_to_stdout: true, cd: dir)
+    cmd = cmd_list |> hd |> to_string
+    args = cmd_list |> tl
+    {stdout, exit_code} = System.cmd(cmd, args, stderr_to_stdout: true, cd: dir)
     if exit_code != 0 do
       Logger.error stdout
       raise "Command #{cmd} exit code: #{exit_code}"
