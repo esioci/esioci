@@ -1,0 +1,4 @@
+---
+build:
+  - exec: "mix deps.get"
+  - exec: "mix.compile"
