@@ -9,13 +9,17 @@ defmodule EsioCi.Common do
     cmd_list = String.split(cmd)
     cmd = cmd_list |> hd |> to_string
     args = cmd_list |> tl
-    {stdout, exit_code} = System.cmd(cmd, args, stderr_to_stdout: true, cd: dir)
-    if exit_code != 0 do
-      Logger.error stdout
-      raise "Command #{cmd} exit code: #{exit_code}"
-    else
-      Logger.info stdout
-      :ok
+    try do
+      {stdout, exit_code} = System.cmd(cmd, args, stderr_to_stdout: true, cd: dir)
+      if exit_code != 0 do
+        Logger.error stdout
+        raise "Command #{cmd} exit code: #{exit_code}"
+      else
+        Logger.info stdout
+        :ok
+      end
+    rescue
+      e -> Logger.error inspect e
     end
   end
 
