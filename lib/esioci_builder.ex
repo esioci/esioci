@@ -22,7 +22,7 @@ defmodule EsioCi.Builder do
               EsioCi.Common.change_bld_status(build_id, "FAILED")
           end
         rescue
-          e in RuntimeError -> EsioCi.Common.change_bld_status(build_id, "FAILED")
+          e -> EsioCi.Common.change_bld_status(build_id, "FAILED")
         end
 
     end
@@ -70,13 +70,14 @@ defmodule EsioCi.Builder do
           end
         else
           Logger.error "Error get build_cmd from yaml"
+          raise MatchError
           :error
         end
       rescue
-        e in MatchError -> Logger.error "Error parsing yaml"
-                           :error
-        e in Protocol.UndefinedError -> Logger.error "Error parsing yaml"
-                            :error
+        e -> Logger.error "Error parsing yaml"
+                           raise MatchError
+        #e in Protocol.UndefinedError -> Logger.error "Error parsing yaml"
+                            #:error
       end
     else
       Logger.error "yaml file: #{yaml_file} doesn't exist"

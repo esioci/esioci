@@ -25,7 +25,7 @@ defmodule EsioCi.Builder.Tests do
 
   test 'test parse broken yaml' do
     expect(EsioCi.Common, :run, fn(cmd, dir) -> :ok end)
-    assert EsioCi.Builder.parse_yaml({:ok, Path.absname("test/test_yaml_broken")}) == :error
+    assert_raise MatchError, fn -> EsioCi.Builder.parse_yaml({:ok, Path.absname("test/test_yaml_broken")}) end
   end
   
 end
