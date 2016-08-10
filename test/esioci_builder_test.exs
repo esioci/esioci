@@ -23,6 +23,11 @@ defmodule EsioCi.Builder.Tests do
     assert EsioCi.Builder.parse_yaml({:ok, Path.absname("test/test_yaml_ok")}) == [:ok]
   end
 
+  test 'test parse yaml with more than one exec' do
+    expect(EsioCi.Common, :run, fn(cmd, dir) -> :ok end)
+    assert EsioCi.Builder.parse_yaml({:ok, Path.absname("test/test_yaml_two_execs")}) == [:ok, :ok]
+  end
+
   test 'test parse broken yaml' do
     expect(EsioCi.Common, :run, fn(cmd, dir) -> :ok end)
     assert_raise MatchError, fn -> EsioCi.Builder.parse_yaml({:ok, Path.absname("test/test_yaml_broken")}) end
