@@ -139,6 +139,8 @@ defmodule Esioci.Router.Test do
   end
 
   test "get all projects" do
+    project = %EsioCi.Project{name: "test_get_all_projects"}
+              |> EsioCi.Repo.insert!
     conn = conn(:get, "/api/v1/projects/all")
 
     conn = EsioCi.Router.call(conn, @opts)
