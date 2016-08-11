@@ -18,7 +18,14 @@ use Mix.Config
 #
 # Or configure a 3rd-party app:
 #
-config :logger, level: :debug
+config :logger,
+  level: :debug,
+  backends: [{LoggerFileBackend, :debug_log},
+             :console]
+
+config :logger, :debug_log,
+  path: "debug.log",
+  level: :debug
 #
 config :esioci, EsioCi.Repo,
   adapter: Ecto.Adapters.Postgres,
