@@ -23,6 +23,22 @@ EsioCi is an OpenSource Continuous Integration software
 6. Run application `screen iex -S mix run`
 7. Configure github push webhook and point it to `address:port/api/v1/default/bld/gh`
 
+### esioci.yaml
+esioci.yaml file is a file with all builds configuration. This file should be placed in your's repository root.
+
+#### Example esioci.yaml:
+```
+---
+build:
+  - exec: "cmd1"
+  - exec: "cmd2"
+```
+
+#### yaml commands:
+
+* build: master build configuration
+* exec: command to execute, supports multiple commands. Each command will be execute in order from up to down in file.
+
 ### API endpoints
 
 #### GET api/v1/project_name/bld/last
@@ -104,7 +120,6 @@ Run github project
     - check node facts
 * Misc:
     - remove old, stuck build
-    - run build in containers
 
 Authors
 -----
