@@ -32,12 +32,14 @@ esioci.yaml file is a file with all builds configuration. This file should be pl
 build:
   - exec: "cmd1"
   - exec: "cmd2"
+artifacts: "artifacts_file.txt"
 ```
 
 #### yaml commands:
 
 * build: master build configuration
 * exec: command to execute, supports multiple commands. Each command will be execute in order from up to down in file.
+* artifacts: one file or directory, or pattern to copy to artifacts directory
 
 ### API endpoints
 

@@ -76,6 +76,10 @@ defmodule EsioCi.Builder do
           raise MatchError
           :error
         end
+        if artifacts != nil do
+          copy_artifacts(artifacts)
+        end
+        :ok
       rescue
         e -> Logger.error "Error parsing yaml"
                            raise MatchError
@@ -98,7 +102,17 @@ defmodule EsioCi.Builder do
       artifacts = :proplists.get_value('artifacts', yaml) |> List.to_string
     rescue
       e -> Logger.info "No artifacts in yaml"
+           nil
     end
+  end
+
+  defp copy_artifacts(src) do
+    Logger.info "Copy build artifacts to artifacats directory"
+    # TODO: refactoring, separate parse yaml and build beceause I need build_id here
+    # Refactored build pipeline => start build in db => get yaml => run_cmd => store artifacts => complete build
+    dst = Application.get_env(:esioci, :artifacts_dir, "/tmp")
+    Logger.debug "Copy #{src} to #{dst}"
+    File.cp_r src, dst
   end
 
   defp extract_cmd([]) do
