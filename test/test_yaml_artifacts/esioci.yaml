@@ -1,0 +1,4 @@
+---
+build:
+  - exec: "mix deps.get && mix.compile"
+artifacts: "test_file"

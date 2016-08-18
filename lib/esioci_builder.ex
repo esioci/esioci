@@ -55,7 +55,10 @@ defmodule EsioCi.Builder do
       try do
         [yaml | _] = :yamerl_constr.file(yaml_file)
         Logger.debug "YAML from file: #{inspect yaml}"
-        build_cmd = get_bld_cmd_from_yaml(yaml)
+        # get artifacts
+        artifacts = yaml |> get_artifacts_from_yaml
+        # get all build commands
+        build_cmd = yaml |> get_bld_cmd_from_yaml
         Logger.debug "Build cmd: #{build_cmd}"
         if build_cmd != :error and is_list(build_cmd) do
           # check if build_cmd is a string
@@ -88,6 +91,14 @@ defmodule EsioCi.Builder do
   def get_bld_cmd_from_yaml(yaml) do
     build_cmds = :proplists.get_value('build', yaml)
     extract_cmd(build_cmds)
+  end
+
+  def get_artifacts_from_yaml(yaml) do
+    try do
+      artifacts = :proplists.get_value('artifacts', yaml) |> List.to_string
+    rescue
+      e -> Logger.info "No artifacts in yaml"
+    end
   end
 
   defp extract_cmd([]) do
