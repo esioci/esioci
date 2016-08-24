@@ -16,8 +16,17 @@ defmodule EsioCi.Builder do
                     Logger.debug status
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
+            "bb" -> Logger.debug "Run build from bitbucket"
+                    EsioCi.Common.change_bld_status(build_id, "RUNNING")
+                    status = msg
+                              |> parse_bitbucket
+                              |> clone
+                              |> parse_yaml
+                    Logger.debug status
+                    EsioCi.Common.change_bld_status(build_id, "COMPLETED")
+                    Logger.info "Build completed"
             _ ->
-              Logger.error "Only github is supported"
+              Logger.error "Unsupported build type"
               Logger.error "Build failed"
               EsioCi.Common.change_bld_status(build_id, "FAILED")
           end
@@ -26,6 +35,17 @@ defmodule EsioCi.Builder do
         end
 
     end
+  end
+
+  def parse_bitbucket(req_json) do
+    git_url    = req_json.params["repository"]["links"]["html"]["href"]
+    commit_sha = nil
+    repo_name  = req_json.params["repository"]["full_name"]
+    Logger.debug "Repository url: #{git_url}"
+    Logger.debug "Repository name: #{repo_name}"
+    Logger.debug "Commit sha: #{commit_sha}"
+
+    {:ok, git_url, repo_name, commit_sha}
   end
 
   def parse_github(req_json) do

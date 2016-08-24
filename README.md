@@ -64,6 +64,9 @@ Returns json with information about all project
 #### POST api/v1/project_name/bld/gh
 Run github project
 
+#### POST api/v1/project_name/bld/bb
+Run bitbucket project
+
 ## How To Develop
 ### Run app first time
 1. get dependencies `mix deps.get`

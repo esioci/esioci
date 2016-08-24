@@ -5,10 +5,13 @@ defmodule EsioCi.Common do
   """
   require Logger
 
-  def run(cmd, dir \\ "/tmp/x") do
-    cmd_list = String.split(cmd)
-    cmd = cmd_list |> hd |> to_string
-    args = cmd_list |> tl
+  def run(cmd, dir \\ "/tmp") do
+    if not File.exists?(dir) do
+      Logger.debug "Direcory #{dir} doesn't exist, creating..."
+      File.mkdir_p dir
+    end
+    cmd_list = String.split(cmd, " ")
+    [cmd|args] = cmd_list
     try do
       Logger.debug "Run cmd: #{cmd} with args: #{args}"
       {stdout, exit_code} = System.cmd(cmd, args, stderr_to_stdout: true, cd: dir)

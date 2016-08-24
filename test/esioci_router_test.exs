@@ -26,6 +26,16 @@ defmodule Esioci.Router.Test do
     assert conn.resp_body == "404: Project esiononexistingproject not found."
   end
 
+  test "can't create bitbucket build for nonexisting project" do
+    conn = conn(:post, "/api/v1/esiononexistingproject/bld/bb")
+
+    conn = EsioCi.Router.call(conn, @opts)
+
+    assert conn.state == :sent
+    assert conn.status == 404
+    assert conn.resp_body == "404: Project esiononexistingproject not found."
+  end
+
   test "get all builds" do
     q = from p in "projects",
       where: p.name == "test03-get-all-builds",
