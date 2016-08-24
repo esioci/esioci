@@ -23,6 +23,10 @@ EsioCi is an OpenSource Continuous Integration software
 6. Run application `screen iex -S mix run`
 7. Configure github push webhook and point it to `address:port/api/v1/default/bld/gh`
 
+### Configuration file
+All app configuration in config/config.exs, see comments for details
+
+
 ### esioci.yaml
 esioci.yaml file is a file with all builds configuration. This file should be placed in your's repository root.
 
@@ -82,6 +86,17 @@ Run bitbucket project
 
 ## Changelog:
 
+### v0.4 - 24.08.2016
+* API
+    - add support for bitbucket
+* YAML
+    - basic support for artifacts, esioci copies files to /tmp
+* Fixes
+    - fix run_cmd if cmd directory doesn't exist
+    - fix non deterministic unit tests
+* Other
+    - Enable logging to file, by default all log comes to debug.log
+
 ### v0.3 - 10.08.2016
 * API
     - get all builds from project
@@ -108,7 +123,7 @@ Run bitbucket project
 ### To Do:
 * Build configuration file:
     - ~~[DONE] exec()~~
-    - artifacts() - save build artifacts
+    - ~~artifacts() - save build artifacts~~
     - pre_build() - run script before build
     - ~~[DONE] run multiple exec()~~
     - parallel and sequential strps

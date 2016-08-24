@@ -23,10 +23,12 @@ config :logger,
   backends: [{LoggerFileBackend, :debug_log},
              :console]
 
+# loging to file configuration
 config :logger, :debug_log,
-  path: "debug.log",
-  level: :debug
-#
+  path: "debug.log",                  # log file name
+  level: :debug                       # log level :debug, :error, :info, :warn
+
+# database configuration
 config :esioci, EsioCi.Repo,
   adapter: Ecto.Adapters.Postgres,
   database: "esioci",
@@ -36,9 +38,11 @@ config :esioci, EsioCi.Repo,
 
 config :esioci, ecto_repos: [EsioCi.Repo]
 
+# application configuration
 config :esioci,
-  api_port: 4000,
-  artifacts_dir: "/tmp/artifacts"
+  api_port: 4000,                     # application backend port - configure this as source port in esioci-ui
+  artifacts_dir: "/tmp/artifacts"     # top artifacts dir, all artifacts will be placed under this path
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
