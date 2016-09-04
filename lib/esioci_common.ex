@@ -15,17 +15,19 @@ defmodule EsioCi.Common do
     try do
       Logger.debug "Run cmd: #{cmd} with args: #{args}"
       {stdout, exit_code} = System.cmd(cmd, args, stderr_to_stdout: true, cd: dir)
-      Logger.warn stdout
-      Logger.warn exit_code
+      Logger.debug stdout
+      Logger.debug exit_code
       if exit_code != 0 do
-        Logger.error stdout
-        raise "Command #{cmd} exit code: #{exit_code}"
+        Logger.error "Command #{cmd} exit code: #{exit_code}"
+        Logger.debug stdout
+        :error
       else
         Logger.info stdout
         :ok
       end
     rescue
       e -> Logger.error inspect e
+           :error
     end
   end
 

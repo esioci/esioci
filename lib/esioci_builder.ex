@@ -84,11 +84,15 @@ defmodule EsioCi.Builder do
           # check if build_cmd is a string
           if is_integer(List.first(build_cmd)) do
             cmd = build_cmd |> to_string
-            EsioCi.Common.run(cmd, dst)
+            if EsioCi.Common.run(cmd, dst) != :ok do
+              raise EsioCiBuildFailed
+            end
           else
             for one_cmd <- build_cmd do
               cmd = one_cmd |> to_string
-              EsioCi.Common.run(cmd, dst)
+              if EsioCi.Common.run(cmd, dst) != :ok do
+                raise EsioCiBuildFailed
+              end
             end
           end
         else
@@ -101,6 +105,8 @@ defmodule EsioCi.Builder do
         end
         :ok
       rescue
+        e in EsioCiBuildFailed -> Logger.error "Build Failed"
+                                  raise EsioCiBuildFailed
         e -> Logger.error "Error parsing yaml"
                            raise MatchError
         #e in Protocol.UndefinedError -> Logger.error "Error parsing yaml"
@@ -145,4 +151,8 @@ defmodule EsioCi.Builder do
     [cmd] ++ extract_cmd(tail)
   end
 
+end
+
+defmodule EsioCiBuildFailed do
+  defexception message: "Build Failed"
 end
