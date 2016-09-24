@@ -9,20 +9,26 @@ defmodule EsioCi.Builder do
           case type do
             "gh" -> Logger.debug "Run build from github"
                     EsioCi.Common.change_bld_status(build_id, "RUNNING")
-                    status = msg
+                    dst = "/tmp/build"
+                    {:ok, build_cmd, artifacts} = {:ok, msg, dst}
                               |> parse_github
                               |> clone
                               |> parse_yaml
-                    Logger.debug status
+                    Logger.debug inspect build_cmd
+                    Logger.debug artifacts
+                    {:ok, build_cmd} |> build
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
             "bb" -> Logger.debug "Run build from bitbucket"
                     EsioCi.Common.change_bld_status(build_id, "RUNNING")
-                    status = msg
-                              |> parse_bitbucket
+                    dst = "/tmp/build"
+                    {:ok, build_cmd, artifacts} = msg
+                              |> parse_github
                               |> clone
                               |> parse_yaml
-                    Logger.debug status
+                    Logger.debug inspect build_cmd
+                    Logger.debug artifacts
+                    {:ok, build_cmd} |> build
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
             _ ->
@@ -37,6 +43,17 @@ defmodule EsioCi.Builder do
     end
   end
 
+  def build({:ok, build_cmd}) do
+    dst = "/tmp/build"
+    for one_cmd <- build_cmd do
+      cmd = one_cmd |> to_string
+        if EsioCi.Common.run(cmd, dst) != :ok do
+          raise EsioCiBuildFailed
+        end
+    end
+    :ok
+  end
+
   def parse_bitbucket(req_json) do
     git_url    = req_json.params["repository"]["links"]["html"]["href"]
     commit_sha = nil
@@ -48,7 +65,7 @@ defmodule EsioCi.Builder do
     {:ok, git_url, repo_name, commit_sha}
   end
 
-  def parse_github(req_json) do
+  def parse_github({:ok, req_json, dst}) do
     git_url     = req_json.params["repository"]["git_url"]
     commit_sha  = req_json.params["head_commit"]["id"]
     repo_name   = req_json.params["repository"]["full_name"]
@@ -56,14 +73,13 @@ defmodule EsioCi.Builder do
     Logger.debug "Repository name: #{repo_name}"
     Logger.debug "Commit sha: #{commit_sha}"
 
-    {:ok, git_url, repo_name, commit_sha}
+    {:ok, git_url, repo_name, commit_sha, dst}
   end
 
-  def clone({ok, git_url, repo_name, commit_sha}) do
-    dst = "/tmp/build"
+  def clone({:ok, git_url, repo_name, commit_sha, dst}) do
     cmd = "git clone #{git_url} #{dst}"
-    EsioCi.Common.run("rm -rf #{dst}")
-    EsioCi.Common.run(cmd)
+    EsioCi.Common.run("rm -rf #{dst}", "/tmp")
+    EsioCi.Common.run(cmd, dst)
     {:ok, dst}
   end
 
@@ -72,49 +88,16 @@ defmodule EsioCi.Builder do
     yaml_file = "#{dst}/esioci.yaml"
     Logger.debug yaml_file
     if File.exists?(yaml_file) do
-      try do
-        [yaml | _] = :yamerl_constr.file(yaml_file)
-        Logger.debug "YAML from file: #{inspect yaml}"
-        # get artifacts
-        artifacts = yaml |> get_artifacts_from_yaml
-        # get all build commands
-        build_cmd = yaml |> get_bld_cmd_from_yaml
-        Logger.debug "Build cmd: #{build_cmd}"
-        if build_cmd != :error and is_list(build_cmd) do
-          # check if build_cmd is a string
-          if is_integer(List.first(build_cmd)) do
-            cmd = build_cmd |> to_string
-            if EsioCi.Common.run(cmd, dst) != :ok do
-              raise EsioCiBuildFailed
-            end
-          else
-            for one_cmd <- build_cmd do
-              cmd = one_cmd |> to_string
-              if EsioCi.Common.run(cmd, dst) != :ok do
-                raise EsioCiBuildFailed
-              end
-            end
-          end
-        else
-          Logger.error "Error get build_cmd from yaml"
-          raise MatchError
-          :error
-        end
-        if artifacts != nil do
-          copy_artifacts(artifacts)
-        end
-        :ok
-      rescue
-        e in EsioCiBuildFailed -> Logger.error "Build Failed"
-                                  raise EsioCiBuildFailed
-        e -> Logger.error "Error parsing yaml"
-                           raise MatchError
-        #e in Protocol.UndefinedError -> Logger.error "Error parsing yaml"
-                            #:error
-      end
+      [yaml | _] = :yamerl_constr.file(yaml_file)
+      Logger.debug "YAML from file: #{inspect yaml}"
+      # get artifacts
+      artifacts = yaml |> get_artifacts_from_yaml
+      # get all build commands
+      build_cmd = yaml |> get_bld_cmd_from_yaml
+      {:ok, build_cmd, artifacts}
     else
       Logger.error "yaml file: #{yaml_file} doesn't exist"
-      :error
+      {:error, [], []}
     end
   end
 
