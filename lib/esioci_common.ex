@@ -5,7 +5,7 @@ defmodule EsioCi.Common do
   """
   require Logger
 
-  def run(cmd, dir \\ "/tmp") do
+  def run(cmd, dir \\ "/tmp", log_file \\ nil) do
     if not File.exists?(dir) do
       Logger.debug "Direcory #{dir} doesn't exist, creating..."
       File.mkdir_p dir
@@ -13,16 +13,21 @@ defmodule EsioCi.Common do
     cmd_list = String.split(cmd, " ")
     [cmd|args] = cmd_list
     try do
-      Logger.debug "Run cmd: #{cmd} with args: #{args}"
+
+      log = "Run cmd: #{cmd} with args: #{args}"
+      Logger.debug log
+      if log_file, do: EsioCi.Buildlog.log "INFO", log, log_file
+
       {stdout, exit_code} = System.cmd(cmd, args, stderr_to_stdout: true, cd: dir)
       Logger.debug stdout
+      if log_file, do: EsioCi.Buildlog.log "INFO", stdout, log_file
       Logger.debug exit_code
       if exit_code != 0 do
-        Logger.error "Command #{cmd} exit code: #{exit_code}"
-        Logger.debug stdout
+        log = "Command #{cmd} exit code: #{exit_code}"
+        if log_file, do: EsioCi.Buildlog.log "ERROR", log, log_file
+        Logger.error log
         :error
       else
-        Logger.info stdout
         :ok
       end
     rescue
