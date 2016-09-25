@@ -10,9 +10,9 @@ defmodule EsioCi.Buildlog do
     returns `:ok`
   """
   def log(type, txt, file) do
-    {:ok, log} = File.open file, [:write]
+    {:ok, log} = File.open file, [:append]
     datetime = DateTime.utc_now |> DateTime.to_string
-    IO.binwrite log, "#{datetime} - #{type} - #{txt}"
+    IO.binwrite log, "#{datetime} - #{type} - #{txt} \n"
     File.close log
     :ok  
   end
