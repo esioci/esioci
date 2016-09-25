@@ -16,7 +16,8 @@ defmodule EsioCi.Builder do
                               |> parse_yaml
                     Logger.debug inspect build_cmd
                     Logger.debug artifacts
-                    {:ok, build_cmd} |> build
+                    log = "#{dst}/build_#{build_id}.txt"
+                    {:ok, build_cmd, log} |> build
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
             "bb" -> Logger.debug "Run build from bitbucket"
@@ -43,11 +44,11 @@ defmodule EsioCi.Builder do
     end
   end
 
-  def build({:ok, build_cmd}) do
+  def build({:ok, build_cmd, log}) do
     dst = "/tmp/build"
     for one_cmd <- build_cmd do
       cmd = one_cmd |> to_string
-        if EsioCi.Common.run(cmd, dst) != :ok do
+        if EsioCi.Common.run(cmd, dst, log) != :ok do
           raise EsioCiBuildFailed
         end
     end
