@@ -9,6 +9,13 @@ defmodule EsioCi.Builder do
           case type do
             "gh" -> Logger.debug "Run build from github"
                     EsioCi.Common.change_bld_status(build_id, "RUNNING")
+                    artifacts_basedir = Application.get_env(:esioci, :artifacts_dir, "/tmp")
+                    artifacts_dir = Path.join(artifacts_basedir, inspect build_id)
+                    unless File.exists?(artifacts_dir) do
+                      File.mkdir_p artifacts_dir
+                    end
+                    log = "#{artifacts_dir}/build_#{build_id}.txt"
+                    Logger.debug log
                     dst = "/tmp/build"
                     {:ok, build_cmd, artifacts} = {:ok, msg, dst}
                               |> parse_github
@@ -16,7 +23,6 @@ defmodule EsioCi.Builder do
                               |> parse_yaml
                     Logger.debug inspect build_cmd
                     Logger.debug artifacts
-                    log = "#{dst}/build_#{build_id}.txt"
                     {:ok, build_cmd, log} |> build
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
@@ -116,13 +122,12 @@ defmodule EsioCi.Builder do
     end
   end
 
-  defp copy_artifacts(src) do
+  defp copy_artifacts(src, artifacts_dir) do
     Logger.info "Copy build artifacts to artifacats directory"
     # TODO: refactoring, separate parse yaml and build beceause I need build_id here
     # Refactored build pipeline => start build in db => get yaml => run_cmd => store artifacts => complete build
-    dst = Application.get_env(:esioci, :artifacts_dir, "/tmp")
-    Logger.debug "Copy #{src} to #{dst}"
-    File.cp_r src, dst
+    Logger.debug "Copy #{src} to #{artifacts_dir}"
+    File.cp_r src, artifacts_dir
   end
 
   defp extract_cmd([]) do
