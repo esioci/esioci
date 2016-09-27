@@ -47,29 +47,32 @@ artifacts: "artifacts_file.txt"
 
 ### API endpoints
 
-#### GET api/v1/project_name/bld/last
+#### GET api/v1/**project_name**/bld/last
 Returns json with last build status for project: project_name
 
-#### GET api/v1/project_name/bld/build_id
+#### GET api/v1/**project_name**/bld/**build_id**
 Returns json with specific build
 
-#### GET api/v1/project_name/bld/all
+#### GET api/v1/**project_name**/bld/all
 Returns json with all builds for specific project
 
-#### GET api/v1/project_name
+#### GET api/v1/**project_name**
 Returns json with information about specific project
 
-#### GET api/v1/projects/project_id
+#### GET api/v1/projects/**project_id**
 Returns json with information about project with id
 
 #### GET api/v1/projects/all
 Returns json with information about all project
 
-#### POST api/v1/project_name/bld/gh
+#### POST api/v1/**project_name**/bld/gh
 Run github project
 
-#### POST api/v1/project_name/bld/bb
+#### POST api/v1/**project_name**/bld/bb
 Run bitbucket project
+
+#### GET artifacts/**build_id**/build_**build_id**.txt
+Get build log.
 
 ## How To Develop
 ### Run app first time
@@ -85,6 +88,18 @@ Run bitbucket project
 2. Coverage html report in cover directory
 
 ## Changelog:
+
+### v0.5 - 27.09.2016
+* API
+    - get build log
+* Other
+    - EsioCi.Builder module refactoring, add test, increase code coverage
+    - save build log to file in addition to standard application log
+
+### v0.4.1 - 4.09.2016
+* Fixes
+    - fix problem with build continues if step fails
+    - fix esioci.yaml file
 
 ### v0.4 - 24.08.2016
 * API
@@ -123,7 +138,7 @@ Run bitbucket project
 ### To Do:
 * Build configuration file:
     - ~~[DONE] exec()~~
-    - ~~artifacts() - save build artifacts~~
+    - ~~[DONE] artifacts() - save build artifacts~~
     - pre_build() - run script before build
     - ~~[DONE] run multiple exec()~~
     - parallel and sequential strps
