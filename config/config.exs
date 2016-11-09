@@ -28,19 +28,25 @@ config :logger, :debug_log,
   path: "debug.log",                  # log file name
   level: :debug                       # log level :debug, :error, :info, :warn
 
+db = if System.get_env("ESIOCI_DB"), do: System.get_env("ESIOCI_DB"), else: "esioci"
+db_user = if System.get_env("ESIOCI_DB_USER"), do: System.get_env("ESIOCI_DB_USER"), else: "postgres"
+db_passwd = if System.get_env("ESIOCI_DB_PASSWD"), do: System.get_env("ESIOCI_DB_PASSWD"), else: ""
+db_host = if System.get_env("ESIOCI_DB_HOST"), do: System.get_env("ESIOCI_DB_HOST"), else: "localhost"
+{ api_port, _ } = ( if System.get_env("ESIOCI_API_PORT"), do: System.get_env("ESIOCI_API_PORT"), else: "4000" ) |> Integer.parse
+
 # database configuration
 config :esioci, EsioCi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  database: "esioci",
-  username: "postgres",
-  password: "",
-  hostname: "localhost"
+  database: "#{db}",
+  username: "#{db_user}",
+  password: "#{db_passwd}",
+  hostname: "#{db_host}"
 
 config :esioci, ecto_repos: [EsioCi.Repo]
 
 # application configuration
 config :esioci,
-  api_port: 4000,                     # application backend port - configure this as source port in esioci-ui
+  api_port: api_port,                     # application backend port - configure this as source port in esioci-ui
   artifacts_dir: "/tmp/artifacts"     # top artifacts dir, all artifacts will be placed under this path
 
 # It is also possible to import configuration files, relative to this
