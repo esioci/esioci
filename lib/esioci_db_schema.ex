@@ -1,4 +1,7 @@
 defmodule EsioCi.Build do
+  @moduledoc """
+  Schema for "builds" table.
+  """
   use Ecto.Schema
   @derive {Poison.Encoder, only: [:id, :state, :artifacts_dir, :project, :inserted_at, :updated_at]}
   schema "builds" do
@@ -11,6 +14,9 @@ defmodule EsioCi.Build do
 end
 
 defmodule EsioCi.Project do
+  @moduledoc """
+  Schema for "projects" table.
+  """
   use Ecto.Schema
   @derive {Poison.Encoder, only: [:id, :name]}
   schema "projects" do

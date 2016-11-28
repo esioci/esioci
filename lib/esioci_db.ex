@@ -1,4 +1,8 @@
 defmodule EsioCi.Db do
+  @moduledoc """
+  EsioCi.Db module is responsible for any manipultion on database,
+  e.g. get from database, save to db. All operations on db should be placed here.
+  """
   import Logger
   import Ecto.Query, only: [from: 2]
 
