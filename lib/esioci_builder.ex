@@ -1,4 +1,7 @@
 defmodule EsioCi.Builder do
+  @moduledoc """
+  Build logic
+  """
   require Logger
   require Poison
 
@@ -135,7 +138,7 @@ defmodule EsioCi.Builder do
   end
 
   defp extract_cmd([head|tail]) do
-    [{'exec', cmd }] = head
+    [{'exec', cmd}] = head
     cmd_str = cmd |> List.to_string
     [cmd] ++ extract_cmd(tail)
   end

@@ -3,7 +3,7 @@ defmodule EsioCi.Mixfile do
 
   def project do
     [app:               :esioci,
-     version:           "0.3.0",
+     version:           "0.5.0",
      elixir:            "~> 1.2",
      build_embedded:    Mix.env == :prod,
      start_permanent:   Mix.env == :prod,
@@ -41,7 +41,7 @@ defmodule EsioCi.Mixfile do
       {:poison, "~> 2.2"},
       {:ecto, "~> 2.0.1"},
       {:postgrex, ">= 0.0.0"},
-      {:yamerl, github: "yakaz/yamerl"},
+      {:yamerl, "~> 0.4.0"},
       {:ex_doc, "~> 0.12", only: :dev},
       {:credo, "~> 0.4", only: [:dev, :test]},
       {:excoveralls, "~> 0.5", only: :test},
