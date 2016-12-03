@@ -20,10 +20,9 @@ defmodule EsioCi.Builder do
                     log = "#{artifacts_dir}/build_#{build_id}.txt"
                     Logger.debug log
                     dst = "/tmp/build"
-                    {:ok, build_cmd, artifacts} = {:ok, msg, dst}
-                              |> parse_github
-                              |> clone
-                              |> parse_yaml
+                    {:ok, git_url, repo_name, commit_sha} = parse_github {:ok, msg}
+                    :ok = clone {:ok, git_url, repo_name, commit_sha, dst}
+                    {:ok, build_cmd, artifacts} = parse_yaml {:ok, dst}
                     Logger.debug inspect build_cmd
                     Logger.debug artifacts
                     {:ok, build_cmd, log} |> build
@@ -75,7 +74,7 @@ defmodule EsioCi.Builder do
     {:ok, git_url, repo_name, commit_sha}
   end
 
-  def parse_github({:ok, req_json, dst}) do
+  def parse_github({:ok, req_json}) do
     git_url     = req_json.params["repository"]["git_url"]
     commit_sha  = req_json.params["head_commit"]["id"]
     repo_name   = req_json.params["repository"]["full_name"]
@@ -83,17 +82,17 @@ defmodule EsioCi.Builder do
     Logger.debug "Repository name: #{repo_name}"
     Logger.debug "Commit sha: #{commit_sha}"
 
-    {:ok, git_url, repo_name, commit_sha, dst}
+    {:ok, git_url, repo_name, commit_sha}
   end
 
   def clone({:ok, git_url, repo_name, commit_sha, dst}) do
     cmd = "git clone #{git_url} #{dst}"
     EsioCi.Common.run("rm -rf #{dst}", "/tmp")
     EsioCi.Common.run(cmd, dst)
-    {:ok, dst}
+    :ok
   end
 
-  def parse_yaml({ok, dst}) do
+  def parse_yaml({:ok, dst}) do
     Logger.debug "Parse yaml file"
     yaml_file = "#{dst}/esioci.yaml"
     Logger.debug yaml_file
