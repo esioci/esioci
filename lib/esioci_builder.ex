@@ -12,11 +12,8 @@ defmodule EsioCi.Builder do
           case type do
             "gh" -> Logger.debug "Run build from github"
                     EsioCi.Common.change_bld_status(build_id, "RUNNING")
-                    artifacts_basedir = Application.get_env(:esioci, :artifacts_dir, "/tmp")
-                    artifacts_dir = Path.join(artifacts_basedir, inspect build_id)
-                    unless File.exists?(artifacts_dir) do
-                      File.mkdir_p artifacts_dir
-                    end
+                    {:ok, artifacts_dir} = prepare_artifacts_dir build_id
+
                     log = "#{artifacts_dir}/build_#{build_id}.txt"
                     Logger.debug log
                     dst = "/tmp/build"
@@ -53,6 +50,16 @@ defmodule EsioCi.Builder do
         end
 
     end
+  end
+
+  def prepare_artifacts_dir(build_id) do
+  # This function prepare artifacts_dir variable and create artifacts dir if non exist
+    artifacts_basedir = Application.get_env(:esioci, :artifacts_dir, "/tmp")
+    artifacts_dir = Path.join(artifacts_basedir, inspect build_id)
+    unless File.exists?(artifacts_dir) do
+      File.mkdir_p artifacts_dir
+    end
+    {:ok, artifacts_dir}
   end
 
   def build({:ok, dst, build_cmd, log}) do
