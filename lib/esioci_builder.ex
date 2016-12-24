@@ -20,12 +20,15 @@ defmodule EsioCi.Builder do
                     log = "#{artifacts_dir}/build_#{build_id}.txt"
                     Logger.debug log
                     dst = "/tmp/build"
+                    # parse github json and get info about build
                     {:ok, git_url, repo_name, commit_sha} = parse_github {:ok, msg}
+                    # clone repository
                     :ok = clone {:ok, git_url, repo_name, commit_sha, dst}
+                    # parse build yaml
                     {:ok, build_cmd, artifacts} = parse_yaml {:ok, dst}
                     Logger.debug inspect build_cmd
                     Logger.debug artifacts
-                    {:ok, build_cmd, log} |> build
+                    :ok = build {:ok, dst, build_cmd, log}
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
             "bb" -> Logger.debug "Run build from bitbucket"
@@ -52,8 +55,7 @@ defmodule EsioCi.Builder do
     end
   end
 
-  def build({:ok, build_cmd, log}) do
-    dst = "/tmp/build"
+  def build({:ok, dst, build_cmd, log}) do
     for one_cmd <- build_cmd do
       cmd = one_cmd |> to_string
         if EsioCi.Common.run(cmd, dst, log) != :ok do
@@ -125,6 +127,7 @@ defmodule EsioCi.Builder do
   end
 
   defp copy_artifacts(src, artifacts_dir) do
+    # This function copy artifacts files to artifacts_dir/build_id
     Logger.info "Copy build artifacts to artifacats directory"
     # TODO: refactoring, separate parse yaml and build beceause I need build_id here
     # Refactored build pipeline => start build in db => get yaml => run_cmd => store artifacts => complete build
