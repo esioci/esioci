@@ -61,7 +61,7 @@ defmodule Esioci.Router.Test do
 
     assert conn.state == :sent
     assert conn.status == 200
-    assert conn.resp_body == "[{\"updated_at\":\"#{Ecto.DateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"COMPLETED\",\"project\":{\"name\":\"test03-get-all-builds\",\"id\":#{created_project.id}},\"inserted_at\":\"#{Ecto.DateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
+    assert conn.resp_body == "[{\"updated_at\":\"#{NaiveDateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"COMPLETED\",\"project\":{\"name\":\"test03-get-all-builds\",\"id\":#{created_project.id}},\"inserted_at\":\"#{NaiveDateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
   end
 
   test "get last build status" do
@@ -88,7 +88,7 @@ defmodule Esioci.Router.Test do
 
     assert conn.state == :sent
     assert conn.status == 200
-    assert conn.resp_body == "[{\"updated_at\":\"#{Ecto.DateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"CREATED-esio-last-build-status\",\"project\":{\"name\":\"test02\",\"id\":#{project_id}},\"inserted_at\":\"#{Ecto.DateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
+    assert conn.resp_body == "[{\"updated_at\":\"#{NaiveDateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"CREATED-esio-last-build-status\",\"project\":{\"name\":\"test02\",\"id\":#{project_id}},\"inserted_at\":\"#{NaiveDateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
   end
 
   test "get build by id" do
@@ -115,7 +115,7 @@ defmodule Esioci.Router.Test do
 
     assert conn.state == :sent
     assert conn.status == 200
-    assert conn.resp_body == "[{\"updated_at\":\"#{Ecto.DateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"CREATED-esio-build-by-id\",\"project\":{\"name\":\"test02\",\"id\":#{project_id}},\"inserted_at\":\"#{Ecto.DateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
+    assert conn.resp_body == "[{\"updated_at\":\"#{NaiveDateTime.to_iso8601(created_build.updated_at)}\",\"state\":\"CREATED-esio-build-by-id\",\"project\":{\"name\":\"test02\",\"id\":#{project_id}},\"inserted_at\":\"#{NaiveDateTime.to_iso8601(created_build.inserted_at)}\",\"id\":#{created_build.id},\"artifacts_dir\":\"\"}]"
   end
 
   test "get last build status from nonexisting project" do

@@ -36,10 +36,10 @@ defmodule EsioCi.Mixfile do
   defp deps do
     [
       {:cowboy, "~> 1.0.0"},
-      {:plug, "~> 1.1.6"},
+      {:plug, "~> 1.3.0"},
       {:cors_plug, "~> 1.1"},
-      {:poison, "~> 2.2"},
-      {:ecto, "~> 2.0.1"},
+      {:poison, "~> 3.0"},
+      {:ecto, "~> 2.1"},
       {:postgrex, ">= 0.0.0"},
       {:yamerl, "~> 0.4.0"},
       {:ex_doc, "~> 0.12", only: :dev},

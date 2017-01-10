@@ -4,6 +4,8 @@ EsioCi is an OpenSource Continuous Integration software
 
 [![Build Status](https://travis-ci.org/esioci/esioci.svg?branch=master)](https://travis-ci.org/esioci/esioci)
 [![Coverage Status](https://coveralls.io/repos/github/esioci/esioci/badge.svg)](https://coveralls.io/github/esioci/esioci)
+[![Deps Status](https://beta.hexfaktor.org/badge/all/github/esioci/esioci.svg)](https://beta.hexfaktor.org/github/esioci/esioci)
+
 
 ## Requirements
 * Elixir >= 1.2
