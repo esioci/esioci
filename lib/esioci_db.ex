@@ -23,6 +23,12 @@ defmodule EsioCi.Db do
       true                          -> :error
     end
   end
+
+  # returns project id for specified project name
+  def get_project_by_name(p_name) do
+    query = from projects in EsioCi.Project, where: projects.name == ^p_name, select: projects.id, limit: 1
+    query |> EsioCi.Repo.all |> List.first
+  end
   
   defp get_last_build_from_project(p_id) do
     from builds in EsioCi.Build, where: builds.project_id == ^p_id, order_by: [desc: :id], limit: 1
