@@ -7,7 +7,8 @@ defmodule EsioCi do
 
     children = [
       worker(EsioCi.Main, ['EsioCi.Main']),
-      worker(EsioCi.Repo, [])
+      worker(EsioCi.Repo, []),
+      worker(EsioCi.Poller, [])
     ]
 
     opts = [strategy: :one_for_one, name: EsioCi.Supervisor]
