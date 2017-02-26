@@ -8,7 +8,7 @@ defmodule EsioCi.Poller do
   require Logger
   
   def start_link do
-    GenServer.start_link(EsioCi.Poller, %{})
+    GenServer.start_link(EsioCi.Poller, %{}, [name: EsioCi.Poller])
   end
 
   def init(state) do

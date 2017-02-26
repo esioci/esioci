@@ -28,18 +28,6 @@ defmodule EsioCi.Builder do
                     :ok = build {:ok, dst, build_cmd, log}
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
-            "bb" -> Logger.debug "Run build from bitbucket"
-                    EsioCi.Common.change_bld_status(build_id, "RUNNING")
-                    dst = "/tmp/build"
-                    {:ok, build_cmd, artifacts} = msg
-                              |> parse_github
-                              |> clone
-                              |> parse_yaml
-                    Logger.debug inspect build_cmd
-                    Logger.debug artifacts
-                    {:ok, build_cmd} |> build
-                    EsioCi.Common.change_bld_status(build_id, "COMPLETED")
-                    Logger.info "Build completed"
             _ ->
               Logger.error "Unsupported build type"
               Logger.error "Build failed"
@@ -70,17 +58,6 @@ defmodule EsioCi.Builder do
         end
     end
     :ok
-  end
-
-  def parse_bitbucket(req_json) do
-    git_url    = req_json.params["repository"]["links"]["html"]["href"]
-    commit_sha = nil
-    repo_name  = req_json.params["repository"]["full_name"]
-    Logger.debug "Repository url: #{git_url}"
-    Logger.debug "Repository name: #{repo_name}"
-    Logger.debug "Commit sha: #{commit_sha}"
-
-    {:ok, git_url, repo_name, commit_sha}
   end
 
   def parse_github({:ok, req_json}) do
