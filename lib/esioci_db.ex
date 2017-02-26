@@ -23,6 +23,20 @@ defmodule EsioCi.Db do
       true                          -> :error
     end
   end
+
+  # returns project id for specified project name
+  def get_project_by_name(p_name) do
+    query = from projects in EsioCi.Project, where: projects.name == ^p_name, select: projects.id, limit: 1
+    p_id = query |> EsioCi.Repo.all |> List.first
+    {:ok, p_id}
+  end
+
+  # Add build to database for specified project
+  def add_build_to_db(project_id) do
+    build = %EsioCi.Build{state: "CREATED", project_id: project_id}
+    created_build = EsioCi.Repo.insert!(build)
+    { :ok, created_build.id }
+  end
   
   defp get_last_build_from_project(p_id) do
     from builds in EsioCi.Build, where: builds.project_id == ^p_id, order_by: [desc: :id], limit: 1

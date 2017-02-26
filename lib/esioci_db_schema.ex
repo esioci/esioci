@@ -21,6 +21,7 @@ defmodule EsioCi.Project do
   @derive {Poison.Encoder, only: [:id, :name]}
   schema "projects" do
     field :name, :string
+    field :repository, :string
     has_many :builds, EsioCi.Build, on_delete: :delete_all
     timestamps
   end

@@ -73,9 +73,6 @@ Returns json with information about all project
 #### POST api/v1/**project_name**/bld/gh
 Run github project
 
-#### POST api/v1/**project_name**/bld/bb
-Run bitbucket project
-
 #### GET artifacts/**build_id**/build_**build_id**.txt
 Get build log.
 

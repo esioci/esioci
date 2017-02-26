@@ -28,6 +28,7 @@ defmodule EsioCi.Builder do
                     :ok = build {:ok, dst, build_cmd, log}
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
+            "poller" -> Logger.debug "Run poller build"
             _ ->
               Logger.error "Unsupported build type"
               Logger.error "Build failed"
@@ -36,8 +37,23 @@ defmodule EsioCi.Builder do
         rescue
           e -> EsioCi.Common.change_bld_status(build_id, "FAILED")
         end
-
     end
+  end
+
+  def poller_build do
+    receive do
+      {sender, project} ->
+        Logger.debug "Create poller build for project: #{project}"
+        { :ok, build_id } = add_build_to_db(project)
+        pid = spawn(EsioCi.Builder, :build, [])
+        send pid, {self, "Poller build", build_id, "poller"}
+    end
+  end
+
+  # Add build to database for speciified project
+  defp add_build_to_db(project) do
+    { :ok, project_id } = EsioCi.Db.get_project_by_name(project)
+    { :ok, build_id } = EsioCi.Db.add_build_to_db(project_id)
   end
 
   def prepare_artifacts_dir(build_id) do
