@@ -43,8 +43,10 @@ defmodule EsioCi.Builder do
   def poller_build do
     receive do
       {sender, project} ->
-        Log.debug "Create poller build for project: #{project}"
+        Logger.debug "Create poller build for project: #{project}"
         { :ok, build_id } = add_build_to_db(project)
+        pid = spawn(EsioCi.Builder, :build, [])
+        send pid, {self, "Poller build", build_id, "poller"}
     end
   end
 

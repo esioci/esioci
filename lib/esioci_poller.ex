@@ -25,9 +25,15 @@ defmodule EsioCi.Poller do
 
     poller_interval = Application.get_env(:esioci, :poller_interval, 60 * 1000)
     Logger.debug "Poller interval: #{poller_interval}"
+    pid = spawn(EsioCi.Builder, :poller_build, [])
+    send pid, {self, "default"}
 
     Process.send_after(self, :poll, poller_interval)
     {:noreply, state}
   end
 
+  defp pull_repository do
+  # check if repository has changes since last build
+
+  end
 end
