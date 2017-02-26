@@ -34,6 +34,9 @@ db_passwd = if System.get_env("ESIOCI_DB_PASSWD"), do: System.get_env("ESIOCI_DB
 db_host = if System.get_env("ESIOCI_DB_HOST"), do: System.get_env("ESIOCI_DB_HOST"), else: "localhost"
 { api_port, _ } = ( if System.get_env("ESIOCI_API_PORT"), do: System.get_env("ESIOCI_API_PORT"), else: "4000" ) |> Integer.parse
 
+# poller interval configuration in miliseconds
+{ poller_interval, _ } = ( if System.get_env("ESIOCI_POLLER_INTERVAL"), do: System.get_env("ESIOCI_POLLER_INTERVAL"), else: "60000") |> Integer.parse
+
 # database configuration
 config :esioci, EsioCi.Repo,
   adapter: Ecto.Adapters.Postgres,
@@ -46,7 +49,8 @@ config :esioci, ecto_repos: [EsioCi.Repo]
 
 # application configuration
 config :esioci,
-  api_port: api_port,                     # application backend port - configure this as source port in esioci-ui
+  api_port: api_port,                 # application backend port - configure this as source port in esioci-ui
+  poller_interval: poller_interval,   # poller interval in miliseconds
   artifacts_dir: "/tmp/artifacts"     # top artifacts dir, all artifacts will be placed under this path
 
 # It is also possible to import configuration files, relative to this
