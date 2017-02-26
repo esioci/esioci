@@ -25,5 +25,6 @@
   "poolboy": {:hex, :poolboy, "1.5.1", "6b46163901cfd0a1b43d692657ed9d7e599853b3b21b95ae5ae0a777cf9b6ca8", [:rebar], []},
   "postgrex": {:hex, :postgrex, "0.13.0", "e101ab47d0725955c5c8830ae8812412992e02e4bd9db09e17abb0a5d82d09c7", [:mix], [{:connection, "~> 1.0", [hex: :connection, optional: false]}, {:db_connection, "~> 1.1", [hex: :db_connection, optional: false]}, {:decimal, "~> 1.0", [hex: :decimal, optional: false]}]},
   "ranch": {:hex, :ranch, "1.2.1", "a6fb992c10f2187b46ffd17ce398ddf8a54f691b81768f9ef5f461ea7e28c762", [:make], []},
+  "redix": {:hex, :redix, "0.5.1", "2bf874a186cc759791b8defdd0bfaa752784716bd48241f6aa972a20e7f95745", [:mix], [{:connection, "~> 1.0", [hex: :connection, optional: false]}]},
   "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.1", "28a4d65b7f59893bc2c7de786dec1e1555bd742d336043fe644ae956c3497fbe", [:make, :rebar], []},
   "yamerl": {:hex, :yamerl, "0.4.0", "ae215b1242810a9bc07716b88062f1bfe06f6bc7cf68372091f630baa536df79", [:rebar3], []}}

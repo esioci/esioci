@@ -19,7 +19,7 @@ defmodule EsioCi.Mixfile do
   def application do
     [
       mod: {EsioCi, []}, 
-      applications: [:logger, :cowboy, :plug, :yamerl, :postgrex, :ecto]
+      applications: [:logger, :cowboy, :plug, :yamerl, :postgrex, :ecto, :redix]
     ]
   end
 
@@ -46,7 +46,8 @@ defmodule EsioCi.Mixfile do
       {:credo, "~> 0.4", only: [:dev, :test]},
       {:excoveralls, "~> 0.5", only: :test},
       {:meck, "~> 0.8.2", only: :test},
-      {:logger_file_backend, "~> 0.0.8"}
+      {:logger_file_backend, "~> 0.0.8"},
+      {:redix, ">= 0.0.0"}
     ]
   end
 end

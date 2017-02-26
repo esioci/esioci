@@ -28,12 +28,17 @@ defmodule EsioCi.Poller do
     pid = spawn(EsioCi.Builder, :poller_build, [])
     send pid, {self, "default"}
 
+    pull_repository
+
     Process.send_after(self, :poll, poller_interval)
     {:noreply, state}
   end
 
   defp pull_repository do
   # check if repository has changes since last build
+    { :ok, conn } = Redix.start_link
+    {:ok, sha } = Redix.command(conn, ~w(GET project_sha))
+    IO.puts inspect sha
 
   end
 end
