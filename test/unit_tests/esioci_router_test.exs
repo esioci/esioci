@@ -171,12 +171,6 @@ defmodule Esioci.Router.Test do
     assert conn.status == 404
   end
 
-  test "add build to DB and change status" do
-    b_id = EsioCi.Router.add_build_to_db(1)
-    build = EsioCi.Repo.get(EsioCi.Build, b_id)
-    assert build != nil
-  end
-
   test "change build status in DB" do
     q = from p in "projects",
       where: p.name == "test03",
@@ -191,7 +185,7 @@ defmodule Esioci.Router.Test do
     else
       project_id = List.first(p_id)
     end
-    b_id = EsioCi.Router.add_build_to_db(project_id)
+    { :ok, b_id } = EsioCi.Db.add_build_to_db(project_id)
     build = EsioCi.Repo.get(EsioCi.Build, b_id)
     assert build != nil
     EsioCi.Common.change_bld_status(b_id, "esioesioesio")
