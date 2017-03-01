@@ -53,8 +53,10 @@ defmodule EsioCi.Poller do
     # if revision doesn't exist in redis, run build immidiatelly
     # othervise check if revision has been changed, if yes run build
     {:ok, dst_dir} = EsioCi.Builder.clone {:ok, repo, name, nil, nil}
+    r = Gitex.Git.open(dst_dir)
+    {:ok, rev} = Gitex.get(:head, r) |> Map.fetch(:hash)
+    Logger.debug "Current revision: #{rev}"
     {:ok, conn} = Redix.start_link
-    rev = "dsdsads"
     case Redix.command(conn, ~w(GET #{name})) do
        {:ok, nil }   -> run_poller_build(name)
        {:ok, db_rev} -> if rev != db_rev, do: run_poller_build(name)
@@ -67,7 +69,7 @@ defmodule EsioCi.Poller do
     pid = spawn(EsioCi.Builder, :poller_build, [])
     send pid, {self, name}
   end
-  
+
   def pull_repository do
   # check if repository has changes since last build
     {:ok, conn} = Redix.start_link

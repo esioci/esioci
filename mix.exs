@@ -47,6 +47,7 @@ defmodule EsioCi.Mixfile do
       {:excoveralls, "~> 0.5", only: :test},
       {:meck, "~> 0.8.2", only: :test},
       {:logger_file_backend, "~> 0.0.8"},
+      {:gitex, "~> 0.2.0"},
       {:redix, ">= 0.0.0"}
     ]
   end
