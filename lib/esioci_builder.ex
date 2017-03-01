@@ -20,7 +20,7 @@ defmodule EsioCi.Builder do
                     # parse github json and get info about build
                     {:ok, git_url, repo_name, commit_sha} = parse_github {:ok, msg}
                     # clone repository
-                    :ok = clone {:ok, git_url, repo_name, commit_sha, dst}
+                    {:ok, _} = clone {:ok, git_url, repo_name, commit_sha, dst}
                     # parse build yaml
                     {:ok, build_cmd, artifacts} = parse_yaml {:ok, dst}
                     Logger.debug inspect build_cmd
@@ -44,7 +44,7 @@ defmodule EsioCi.Builder do
     receive do
       {sender, project} ->
         Logger.debug "Create poller build for project: #{project}"
-        { :ok, build_id } = add_build_to_db(project)
+        {:ok, build_id} = add_build_to_db(project)
         pid = spawn(EsioCi.Builder, :build, [])
         send pid, {self, "Poller build", build_id, "poller"}
     end
@@ -52,8 +52,8 @@ defmodule EsioCi.Builder do
 
   # Add build to database for speciified project
   defp add_build_to_db(project) do
-    { :ok, project_id } = EsioCi.Db.get_project_by_name(project)
-    { :ok, build_id } = EsioCi.Db.add_build_to_db(project_id)
+    {:ok, project_id} = EsioCi.Db.get_project_by_name(project)
+    {:ok, build_id} = EsioCi.Db.add_build_to_db(project_id)
   end
 
   def prepare_artifacts_dir(build_id) do
@@ -69,7 +69,8 @@ defmodule EsioCi.Builder do
   def build({:ok, dst, build_cmd, log}) do
     for one_cmd <- build_cmd do
       cmd = one_cmd |> to_string
-        if EsioCi.Common.run(cmd, dst, log) != :ok do
+      # TODO tutaj naprawić!!!!
+        if EsioCi.Common.run(cmd, dst, log) != { :ok,  } do
           raise EsioCiBuildFailed
         end
     end
@@ -87,12 +88,16 @@ defmodule EsioCi.Builder do
     {:ok, git_url, repo_name, commit_sha}
   end
 
+  def get_sha(path) do
+    cmd = "git rev-parse HEAD"
+    EsioCi.Common.run(cmd, path)
+  end
   def clone({:ok, git_url, repo_name, commit_sha, dst}) do
-    unless dst, do: dst_dir = "/tmp/#{repo_name}", else: dst_dir = dst
+    if dst, do: dst_dir = dst, else: dst_dir = "tmp/#{repo_name}"
     cmd = "git clone #{git_url} #{dst_dir}"
     File.rm_rf(dst_dir)
     EsioCi.Common.run(cmd, dst)
-    :ok
+    { :ok, dst_dir }
   end
 
   def parse_yaml({:ok, dst}) do

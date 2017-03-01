@@ -26,13 +26,13 @@ defmodule EsioCi.Common do
         log = "Command #{cmd} exit code: #{exit_code}"
         if log_file, do: EsioCi.Buildlog.log "ERROR", log, log_file
         Logger.error log
-        :error
+        { :error, stdout }
       else
-        :ok
+        { :ok, stdout }
       end
     rescue
       e -> Logger.error inspect e
-           :error
+           { :error, nil }
     end
   end
 

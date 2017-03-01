@@ -23,7 +23,7 @@ defmodule EsioCi.Poller do
     Logger.debug "Run poller"
     projects = EsioCi.Db.get_project_by_id("all")
 
-    poller_iterator(projects)
+    {:ok} = poller_iterator projects
     pid = spawn(EsioCi.Builder, :poller_build, [])
     send pid, {self, "default"}
 
@@ -37,20 +37,25 @@ defmodule EsioCi.Poller do
 
   def poller_iterator(projects) do
   # Iterate over projects list and run repo checker
-    [ head | tail ] = projects
-    { :ok, repo } = Map.fetch(head, :repository)
-    { :ok, name } = Map.fetch(head, :name)
-    if repo != "None", do: check_poll(name, repo)
+    case projects do
+      [] -> {:ok}
+       _ -> [head | tail] = projects
+            {:ok, repo} = Map.fetch(head, :repository)
+            {:ok, name} = Map.fetch(head, :name)
+            Logger.debug "Check project: #{name} repository with address: #{repo}"
+            if repo != "None", do: check_poll(name, repo)
+            poller_iterator(tail)
+    end
   end
 
   defp check_poll(name, repo) do
-    :ok = EsioCi.Builder.clone {:ok, repo, name, nil, nil}
+    {:ok, dst_dir} = EsioCi.Builder.clone {:ok, repo, name, nil, nil}
   end
 
   defp pull_repository do
   # check if repository has changes since last build
-    { :ok, conn } = Redix.start_link
-    { :ok, sha } = Redix.command(conn, ~w(GET project_sha))
+    {:ok, conn} = Redix.start_link
+    {:ok, sha} = Redix.command(conn, ~w(GET project_sha))
     IO.puts inspect sha
 
   end
