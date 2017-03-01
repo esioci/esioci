@@ -15,7 +15,7 @@ defmodule EsioCi.Poller do
     poller_interval = Application.get_env(:esioci, :poller_interval, 60 * 1000)
     Logger.debug "Poller interval: #{poller_interval}"
 
-    Process.send_after(self, :poll, poller_interval)
+    #Process.send_after(self, :poll, poller_interval)
     {:ok, state}
   end
 
@@ -27,7 +27,7 @@ defmodule EsioCi.Poller do
     pid = spawn(EsioCi.Builder, :poller_build, [])
     send pid, {self, "default"}
 
-    pull_repository
+    # pull_repository
 
     poller_interval = Application.get_env(:esioci, :poller_interval, 60 * 1000)
     Logger.debug "Poller interval: #{poller_interval}"
@@ -48,15 +48,32 @@ defmodule EsioCi.Poller do
     end
   end
 
-  defp check_poll(name, repo) do
+  def check_poll(name, repo) do
+    # download repository and get revision sha
+    # if revision doesn't exist in redis, run build immidiatelly
+    # othervise check if revision has been changed, if yes run build
     {:ok, dst_dir} = EsioCi.Builder.clone {:ok, repo, name, nil, nil}
+    {:ok, conn} = Redix.start_link
+    rev = "dsdsads"
+    case Redix.command(conn, ~w(GET #{name})) do
+       {:ok, nil }   -> run_poller_build(name)
+       {:ok, db_rev} -> if rev != db_rev, do: run_poller_build(name)
+    end
+    Redix.command(conn, ~w(SET #{name} #{rev}))
+    {:ok}
   end
 
-  defp pull_repository do
+  def run_poller_build(name) do
+    pid = spawn(EsioCi.Builder, :poller_build, [])
+    send pid, {self, name}
+  end
+  
+  def pull_repository do
   # check if repository has changes since last build
     {:ok, conn} = Redix.start_link
-    {:ok, sha} = Redix.command(conn, ~w(GET project_sha))
-    IO.puts inspect sha
-
+    case Redix.command(conn, ~w(GET project_sha)) do
+       {:ok, nil } -> Logger.info "ESIO"
+       {:ok, x} -> Logger.info x
+    end
   end
 end

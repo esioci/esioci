@@ -93,10 +93,10 @@ defmodule EsioCi.Builder do
     EsioCi.Common.run(cmd, path)
   end
   def clone({:ok, git_url, repo_name, commit_sha, dst}) do
-    if dst, do: dst_dir = dst, else: dst_dir = "tmp/#{repo_name}"
+    if dst, do: dst_dir = dst, else: dst_dir = "/tmp/#{repo_name}"
     cmd = "git clone #{git_url} #{dst_dir}"
     File.rm_rf(dst_dir)
-    EsioCi.Common.run(cmd, dst)
+    EsioCi.Common.run(cmd)
     { :ok, dst_dir }
   end
 
