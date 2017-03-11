@@ -65,13 +65,4 @@ defmodule EsioCi.Poller do
     pid = spawn(EsioCi.Builder, :poller_build, [])
     send pid, {self, name}
   end
-
-  def pull_repository do
-  # check if repository has changes since last build
-    {:ok, conn} = Redix.start_link
-    case Redix.command(conn, ~w(GET project_sha)) do
-       {:ok, nil } -> Logger.info "ESIO"
-       {:ok, x} -> Logger.info x
-    end
-  end
 end
