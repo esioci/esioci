@@ -7,7 +7,7 @@ defmodule EsioCi.Builder do
 
   def build do
     receive do
-      {sender, msg, build_id, type} ->
+      {sender, msg, build_id, type, project, repo} ->
         try do
           case type do
             "gh" -> Logger.debug "Run build from github"
@@ -29,6 +29,19 @@ defmodule EsioCi.Builder do
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
             "poller" -> Logger.debug "Run poller build"
+                    EsioCi.Common.change_bld_status(build_id, "RUNNING")
+                    {:ok, artifacts_dir} = prepare_artifacts_dir build_id
+
+                    log = "#{artifacts_dir}/build_#{build_id}.txt"
+                    Logger.debug log
+                    dst = "/tmp/build"
+                    {:ok, _} = clone {:ok, repo, project, nil, dst}
+                    {:ok, build_cmd, artifacts} = parse_yaml {:ok, dst}
+                    Logger.debug inspect build_cmd
+                    Logger.debug artifacts
+                    :ok = build {:ok, dst, build_cmd, log}
+                    EsioCi.Common.change_bld_status(build_id, "COMPLETED")
+                    Logger.info "Build completed"
             _ ->
               Logger.error "Unsupported build type"
               Logger.error "Build failed"
@@ -42,11 +55,12 @@ defmodule EsioCi.Builder do
 
   def poller_build do
     receive do
-      {sender, project} ->
+      {sender, project, repo} ->
+        Logger.error inspect repo
         Logger.debug "Create poller build for project: #{project}"
         {:ok, build_id} = add_build_to_db(project)
         pid = spawn(EsioCi.Builder, :build, [])
-        send pid, {self, "Poller build", build_id, "poller"}
+        send pid, {self, "Poller build", build_id, "poller", project, repo}
     end
   end
 

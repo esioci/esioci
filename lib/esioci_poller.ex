@@ -53,16 +53,18 @@ defmodule EsioCi.Poller do
     {:ok, rev} = Gitex.get(:head, r) |> Map.fetch(:hash)
     Logger.debug "Current revision: #{rev}"
     {:ok, conn} = Redix.start_link
-    case Redix.command(conn, ~w(GET #{name})) do
-       {:ok, rev} -> Logger.info "No changes since last poller, skip build."
-       {:ok, _}   -> run_poller_build(name)
+    {:ok, db_rev} = Redix.command(conn, ~w(GET #{name}))
+    if db_rev == rev do
+      Logger.info "No changes since last poller, skip build."
+    else
+      run_poller_build(name, repo)
     end
     Redix.command(conn, ~w(SET #{name} #{rev}))
     {:ok}
   end
 
-  def run_poller_build(name) do
+  def run_poller_build(name, repo) do
     pid = spawn(EsioCi.Builder, :poller_build, [])
-    send pid, {self, name}
+    send pid, {self, name, repo}
   end
 end
