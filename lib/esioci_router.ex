@@ -40,7 +40,7 @@ defmodule EsioCi.Router do
 
        1 -> { :ok, build_id } = EsioCi.Db.add_build_to_db(List.first(p_id))
             pid = spawn(EsioCi.Builder, :build, [])
-            send pid, {self, conn, build_id, "gh"}
+            send pid, {self, conn, build_id, "gh", nil, nil}
             conn
             |> send_resp(200, "Build created with id #{build_id}")
 
