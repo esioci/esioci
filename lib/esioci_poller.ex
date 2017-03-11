@@ -15,7 +15,7 @@ defmodule EsioCi.Poller do
     poller_interval = Application.get_env(:esioci, :poller_interval, 60 * 1000)
     Logger.debug "Poller interval: #{poller_interval}"
 
-    #Process.send_after(self, :poll, poller_interval)
+    Process.send_after(self, :poll, poller_interval)
     {:ok, state}
   end
 
@@ -24,10 +24,6 @@ defmodule EsioCi.Poller do
     projects = EsioCi.Db.get_project_by_id("all")
 
     {:ok} = poller_iterator projects
-    pid = spawn(EsioCi.Builder, :poller_build, [])
-    send pid, {self, "default"}
-
-    # pull_repository
 
     poller_interval = Application.get_env(:esioci, :poller_interval, 60 * 1000)
     Logger.debug "Poller interval: #{poller_interval}"
@@ -58,8 +54,8 @@ defmodule EsioCi.Poller do
     Logger.debug "Current revision: #{rev}"
     {:ok, conn} = Redix.start_link
     case Redix.command(conn, ~w(GET #{name})) do
-       {:ok, nil }   -> run_poller_build(name)
-       {:ok, db_rev} -> if rev != db_rev, do: run_poller_build(name)
+       {:ok, rev} -> Logger.info "No changes since last poller, skip build."
+       {:ok, _}   -> run_poller_build(name)
     end
     Redix.command(conn, ~w(SET #{name} #{rev}))
     {:ok}
