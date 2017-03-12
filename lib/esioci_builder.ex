@@ -83,10 +83,8 @@ defmodule EsioCi.Builder do
   def build({:ok, dst, build_cmd, log}) do
     for one_cmd <- build_cmd do
       cmd = one_cmd |> to_string
-      # TODO tutaj naprawić!!!!
-        if EsioCi.Common.run(cmd, dst, log) != { :ok,  } do
-          raise EsioCiBuildFailed
-        end
+      {result, _} = EsioCi.Common.run(cmd, dst, log)
+      unless result == :ok, do: raise EsioCiBuildFailed
     end
     :ok
   end
