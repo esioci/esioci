@@ -3,10 +3,17 @@ elixir:
   - 1.4.0
 otp_release:
   - 19.0
+env:
+  - MIX_ENV=test
 services:
   - postgresql
   - redis
 before_script:
   - psql -c 'create database esioci;' -U postgres
 script:
-  - "MIX_ENV=test mix do deps.get && mix compile && mix ecto.migrate && mix run priv/repo/seeds.exs && MIX_ENV=test mix coveralls.travis"
+  - mix deps.get
+  - mix compile
+  - mix ecto.create
+  - mix ecto.migrate
+  - mix run priv/repo/seeds.exs
+  - mix coveralls.travis
