@@ -7,7 +7,7 @@ defmodule EsioCi.Builder do
 
   def build do
     receive do
-      {sender, msg, build_id, type} ->
+      {sender, msg, build_id, type, project, repo} ->
         try do
           case type do
             "gh" -> Logger.debug "Run build from github"
@@ -20,7 +20,7 @@ defmodule EsioCi.Builder do
                     # parse github json and get info about build
                     {:ok, git_url, repo_name, commit_sha} = parse_github {:ok, msg}
                     # clone repository
-                    :ok = clone {:ok, git_url, repo_name, commit_sha, dst}
+                    {:ok, _} = clone {:ok, git_url, repo_name, commit_sha, dst}
                     # parse build yaml
                     {:ok, build_cmd, artifacts} = parse_yaml {:ok, dst}
                     Logger.debug inspect build_cmd
@@ -29,6 +29,19 @@ defmodule EsioCi.Builder do
                     EsioCi.Common.change_bld_status(build_id, "COMPLETED")
                     Logger.info "Build completed"
             "poller" -> Logger.debug "Run poller build"
+                    EsioCi.Common.change_bld_status(build_id, "RUNNING")
+                    {:ok, artifacts_dir} = prepare_artifacts_dir build_id
+
+                    log = "#{artifacts_dir}/build_#{build_id}.txt"
+                    Logger.debug log
+                    dst = "/tmp/build"
+                    {:ok, _} = clone {:ok, repo, project, nil, dst}
+                    {:ok, build_cmd, artifacts} = parse_yaml {:ok, dst}
+                    Logger.debug inspect build_cmd
+                    Logger.debug artifacts
+                    :ok = build {:ok, dst, build_cmd, log}
+                    EsioCi.Common.change_bld_status(build_id, "COMPLETED")
+                    Logger.info "Build completed"
             _ ->
               Logger.error "Unsupported build type"
               Logger.error "Build failed"
@@ -42,18 +55,19 @@ defmodule EsioCi.Builder do
 
   def poller_build do
     receive do
-      {sender, project} ->
+      {sender, project, repo} ->
+        Logger.error inspect repo
         Logger.debug "Create poller build for project: #{project}"
-        { :ok, build_id } = add_build_to_db(project)
+        {:ok, build_id} = add_build_to_db(project)
         pid = spawn(EsioCi.Builder, :build, [])
-        send pid, {self, "Poller build", build_id, "poller"}
+        send pid, {self, "Poller build", build_id, "poller", project, repo}
     end
   end
 
   # Add build to database for speciified project
   defp add_build_to_db(project) do
-    { :ok, project_id } = EsioCi.Db.get_project_by_name(project)
-    { :ok, build_id } = EsioCi.Db.add_build_to_db(project_id)
+    {:ok, project_id} = EsioCi.Db.get_project_by_name(project)
+    {:ok, build_id} = EsioCi.Db.add_build_to_db(project_id)
   end
 
   def prepare_artifacts_dir(build_id) do
@@ -69,9 +83,8 @@ defmodule EsioCi.Builder do
   def build({:ok, dst, build_cmd, log}) do
     for one_cmd <- build_cmd do
       cmd = one_cmd |> to_string
-        if EsioCi.Common.run(cmd, dst, log) != :ok do
-          raise EsioCiBuildFailed
-        end
+      {result, _} = EsioCi.Common.run(cmd, dst, log)
+      unless result == :ok, do: raise EsioCiBuildFailed
     end
     :ok
   end
@@ -87,11 +100,16 @@ defmodule EsioCi.Builder do
     {:ok, git_url, repo_name, commit_sha}
   end
 
+  def get_sha(path) do
+    cmd = "git rev-parse HEAD"
+    EsioCi.Common.run(cmd, path)
+  end
   def clone({:ok, git_url, repo_name, commit_sha, dst}) do
-    cmd = "git clone #{git_url} #{dst}"
-    EsioCi.Common.run("rm -rf #{dst}", "/tmp")
-    EsioCi.Common.run(cmd, dst)
-    :ok
+    if dst, do: dst_dir = dst, else: dst_dir = "/tmp/#{repo_name}"
+    cmd = "git clone #{git_url} #{dst_dir}"
+    File.rm_rf(dst_dir)
+    EsioCi.Common.run(cmd)
+    { :ok, dst_dir }
   end
 
   def parse_yaml({:ok, dst}) do
