@@ -11,16 +11,18 @@ EsioCi is an OpenSource Continuous Integration software
 * Elixir >= 1.2
 * OTP 19
 * PostgreSQL database
+* Redis database
 
 ## How To Use
 ### Installation and Configuration
 1. Download source code
 2. Configure application via ENV variables
-  1. ESIOCI_API_PORT  => port witch esioci starts, default is 4000
-  2. ESIOCI_DB        => database name, default is "esioci"
-  3. ESIOCI_DB_USER   => database user
-  4. ESIOCI_DB_PASSWD => database password
-  5. ESIOCI_DB_HOST   => database host
+  1. ESIOCI_API_PORT       => port witch esioci starts, default is 4000
+  2. ESIOCI_DB             => database name, default is "esioci"
+  3. ESIOCI_DB_USER        => database user
+  4. ESIOCI_DB_PASSWD      => database password
+  5. ESIOCI_DB_HOST        => database host
+  6. ESIOCI_POLLER_NTERVAL => poller run interval in ms, default 60000
   3. Set artifacts directory, default is /tmp/artifacts
 3. Create database
 4. Run migration `mix ecto.migrate`
@@ -91,6 +93,12 @@ Get build log.
 
 ## Changelog:
 
+### v0.6 - 12.03.2017
+* Other
+    - Add pooling, now projects in database has repository collumn. EsioCI polls that repository and builds if detect changes.
+    - Fix code style.
+    - Upgrade elixir and hex packages.
+
 ### v0.5 - 27.09.2016
 * API
     - get build log
@@ -136,27 +144,6 @@ Get build log.
 * exec() command in esioci.yaml
 * API
     - check last build status via api
-
-### To Do:
-* Build configuration file:
-    - ~~[DONE] exec()~~
-    - ~~[DONE] artifacts() - save build artifacts~~
-    - pre_build() - run script before build
-    - ~~[DONE] run multiple exec()~~
-    - parallel and sequential strps
-    - container support
-* API
-    - ~~[DONE] run build from guthub~~
-    - ~~[DONE] get build~~
-    - ~~[DONE] get project~~
-    - create project
-    - get build steps map
-    - download artifacts zip
-* Support for multiple nodes
-    - initial support
-    - check node facts
-* Misc:
-    - remove old, stuck build
 
 Authors
 -----
