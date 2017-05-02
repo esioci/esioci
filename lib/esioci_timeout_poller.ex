@@ -11,12 +11,13 @@ defmodule EsioCi.TimeoutPoller do
   end
 
   def init(state) do
+    Logger.debug "Initialize timeout poller."
     Process.send_after(self, :poll, 300 * 1000)
     {:ok, state}
   end
 
   def handle_info(:poll, state) do
-    Logger.debug "Run timeout poller"
+    Logger.debug "Run timeout poller."
     Process.send_after(self, :poll, 300 * 1000)
     {:noreply, state}
   end
