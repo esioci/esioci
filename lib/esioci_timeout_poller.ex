@@ -5,7 +5,7 @@ defmodule EsioCi.TimeoutPoller do
   """
   use GenServer
   require Logger
-  
+
   def start_link do
     GenServer.start_link(EsioCi.TimeoutPoller, %{}, [name: EsioCi.TimeoutPoller])
   end
@@ -21,4 +21,5 @@ defmodule EsioCi.TimeoutPoller do
     Process.send_after(self, :poll, 300 * 1000)
     {:noreply, state}
   end
+
 end

@@ -1,7 +1,7 @@
 defmodule EsioCi.Db.Tests do
   use ExUnit.Case
 
-  test 'test get project by name' do
+  test 'get project by name' do
     assert EsioCi.Db.get_project_by_name("default") == {:ok, 1}
   end
 
@@ -11,4 +11,3 @@ defmodule EsioCi.Db.Tests do
     assert build != nil
   end
 end
-
