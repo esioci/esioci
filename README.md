@@ -81,13 +81,20 @@ Get build log.
 ## How To Develop
 ### Run app first time
 1. get dependencies `mix deps.get`
-2. compile `mix compile`
-3. Create database `mix ecto.create`
-4. Migrate database `mix ecto.migrate`
-5. Seed database `mix run priv/repo/seeds.exs`
-6. run `iex -S mix run`
+1. compile `mix compile`
+1. Run docker images with psql and Redis
+  1. `docker run -p 5432:5432 -d postgres:9.6.3`
+  1. `docker run -d -p 6379:6379 redis`
+1. Create database `mix ecto.create`
+1. Migrate database `mix ecto.migrate`
+1. Seed database `mix run priv/repo/seeds.exs`
+1. run `iex -S mix run`
 
 ### Unit tests
+1. Prepare test database
+  1. `MIX_ENV=test mix ecto.create`
+  1. `MIX_ENV=test mix ecto.migrate`
+  1. `MIX_ENV=test mix run priv/repo/seeds.exs`
 1. Run unit tests and generate html coverage report `mix coveralls.html`
 2. Coverage html report in cover directory
 
