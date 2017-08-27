@@ -32,6 +32,7 @@ db = if System.get_env("ESIOCI_DB"), do: System.get_env("ESIOCI_DB"), else: "esi
 db_user = if System.get_env("ESIOCI_DB_USER"), do: System.get_env("ESIOCI_DB_USER"), else: "postgres"
 db_passwd = if System.get_env("ESIOCI_DB_PASSWD"), do: System.get_env("ESIOCI_DB_PASSWD"), else: ""
 db_host = if System.get_env("ESIOCI_DB_HOST"), do: System.get_env("ESIOCI_DB_HOST"), else: "localhost"
+redis_db = if System.get_env("ESIOCI_REDIS"), do: System.get_env("ESIOCI_REDIS"), else: "redis://localhost:6379"
 { api_port, _ } = ( if System.get_env("ESIOCI_API_PORT"), do: System.get_env("ESIOCI_API_PORT"), else: "4000" ) |> Integer.parse
 
 # poller interval configuration in miliseconds
@@ -51,7 +52,8 @@ config :esioci, ecto_repos: [EsioCi.Repo]
 config :esioci,
   api_port: api_port,                 # application backend port - configure this as source port in esioci-ui
   poller_interval: poller_interval,   # poller interval in miliseconds
-  artifacts_dir: "/tmp/artifacts"     # top artifacts dir, all artifacts will be placed under this path
+  artifacts_dir: "/tmp/artifacts",    # top artifacts dir, all artifacts will be placed under this path
+  redis_db: redis_db                  # redis database address
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
