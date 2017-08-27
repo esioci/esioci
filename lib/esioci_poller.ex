@@ -6,7 +6,7 @@ defmodule EsioCi.Poller do
   """
   use GenServer
   require Logger
-  
+
   def start_link do
     GenServer.start_link(EsioCi.Poller, %{}, [name: EsioCi.Poller])
   end
@@ -52,7 +52,8 @@ defmodule EsioCi.Poller do
     r = Gitex.Git.open(dst_dir)
     {:ok, rev} = Gitex.get(:head, r) |> Map.fetch(:hash)
     Logger.debug "Current revision: #{rev}"
-    {:ok, conn} = Redix.start_link
+    redis_db = Application.get_env(:esioci, :redis_db, 'redis://localhost:6379')
+    {:ok, conn} = Redix.start_link(redis_db, name: :redix)
     {:ok, db_rev} = Redix.command(conn, ~w(GET #{name}))
     if db_rev == rev do
       Logger.info "No changes since last poller, skip build."
