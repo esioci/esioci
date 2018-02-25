@@ -4,7 +4,7 @@ defmodule EsioCi.Mixfile do
   def project do
     [app:               :esioci,
      version:           "0.5.0",
-     elixir:            "~> 1.4",
+     elixir:            "~> 1.6.1",
      build_embedded:    Mix.env == :prod,
      start_permanent:   Mix.env == :prod,
      deps:              deps(),
