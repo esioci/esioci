@@ -24,7 +24,8 @@ EsioCi is an OpenSource Continuous Integration software
   5. ESIOCI_DB_HOST        => database host
   6. ESIOCI_POLLER_NTERVAL => poller run interval in ms, default 60000
   3. Set artifacts directory, default is /tmp/artifacts
-3. Create database
+3. Create database:
+  HINT: You can run dev database instance in docker: `docker run --name some-postgres -p 5432:5432 -d postgres`
 4. Run migration `mix ecto.migrate`
 5. Seed database `mix run priv/repo/seeds.exs`
 6. Run application `screen iex -S mix run`
@@ -83,7 +84,7 @@ Get build log.
 1. get dependencies `mix deps.get`
 1. compile `mix compile`
 1. Run docker images with psql and Redis
-  1. `docker run -p 5432:5432 -d postgres:9.6.3`
+  1. `docker run -p 5432:5432 -d postgres:10.2`
   1. `docker run -d -p 6379:6379 redis`
 1. Create database `mix ecto.create`
 1. Migrate database `mix ecto.migrate`
